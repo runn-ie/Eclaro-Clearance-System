@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Eclaro Academy Clearance System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-900:#132a45;
+  --navy-800:#1a3552;
+  --navy-700:#1d3f66;
+  --navy-600:#27517f;
+  --navy-100:#e8edf4;
+  --olive:#7d9b3e;
+  --olive-light:#eef3e1;
+  --success:#1e9e6b;
+  --success-light:#e3f6ee;
+  --info:#2f6fed;
+  --info-light:#e8eefd;
+  --warning:#e8a33d;
+  --warning-light:#fdf1de;
+  --danger:#d64545;
+  --danger-light:#fbe7e7;
+  --ink:#232a2f;
+  --ink-soft:#5b636b;
+  --paper:#f4f6f7;
+  --paper-2:#eef0f1;
+  --white:#ffffff;
+  --line:#e1e5e8;
+  --gray:#868e94;
+  --shadow:0 2px 10px rgba(20,30,40,.06), 0 1px 2px rgba(20,30,40,.05);
+  --shadow-lg:0 14px 34px rgba(15,30,45,.16);
+  --radius:14px;
+  --sbw:258px;
+  --sbw-collapsed:76px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;margin:0;letter-spacing:-0.01em;}
+p{margin:0;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font-family:inherit;}
+.mono{font-family:'JetBrains Mono',monospace;}
+img{max-width:100%;display:block;}
+.hidden{display:none !important;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#c7ccd0;border-radius:8px;}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:9px;font-weight:600;font-size:13.5px;transition:.12s;white-space:nowrap;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--navy-700);color:#fff;box-shadow:0 4px 12px rgba(29,63,102,.28);}
+.btn-primary:hover{background:var(--navy-900);}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{background:#188457;}
+.btn-info{background:var(--info);color:#fff;}
+.btn-info:hover{background:#1f5cd6;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#b93636;}
+.btn-warning{background:var(--warning);color:#fff;}
+.btn-outline{background:#fff;border:1.4px solid var(--line);color:var(--ink);}
+.btn-outline:hover{border-color:var(--navy-700);color:var(--navy-700);}
+.btn-ghost{background:transparent;color:var(--ink-soft);}
+.btn-ghost:hover{color:var(--ink);background:var(--paper-2);}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:7px;}
+.btn-xs{padding:5px 9px;font-size:11.5px;border-radius:6px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:.5;cursor:not-allowed;}
+
+/* ---------- badges ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:100px;white-space:nowrap;}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+.b-approved,.b-completed,.b-active{background:var(--success-light);color:var(--success);}
+.b-pending{background:var(--warning-light);color:var(--warning);}
+.b-progress{background:var(--info-light);color:var(--info);}
+.b-rejected,.b-inactive{background:var(--danger-light);color:var(--danger);}
+.b-gray{background:var(--paper-2);color:var(--gray);}
+
+/* ---------- app shell ---------- */
+.app{display:flex;min-height:100vh;}
+.sidebar{
+  width:var(--sbw);flex-shrink:0;background:var(--navy-900);color:#fff;display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;z-index:90;transition:width .2s ease, left .2s ease;
+}
+.sidebar.collapsed{width:var(--sbw-collapsed);}
+.sb-head{display:flex;align-items:center;gap:11px;padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4px;flex-shrink:0;}
+.sb-logo img{width:100%;height:100%;object-fit:contain;}
+.sb-name{font-family:'Poppins';font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;transition:opacity .15s;}
+.sb-name span{display:block;font-family:'Inter';font-weight:500;font-size:10.5px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.05em;}
+.sidebar.collapsed .sb-name{display:none;}
+
+.sb-profile{padding:18px;display:flex;flex-direction:column;align-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(140deg,var(--olive),#5f7a2b);display:flex;align-items:center;justify-content:center;font-family:'Poppins';font-weight:700;font-size:18px;margin-bottom:10px;color:#fff;border:2.5px solid rgba(255,255,255,.25);}
+.sb-profile .wl{font-size:11.5px;color:rgba(255,255,255,.55);}
+.sb-profile b{display:block;font-size:14px;margin-top:2px;}
+.sidebar.collapsed .sb-profile{padding:14px 8px;}
+.sidebar.collapsed .sb-profile .wl,.sidebar.collapsed .sb-profile b{display:none;}
+
+.sb-nav{flex:1;overflow-y:auto;padding:14px 12px;}
+.sb-group-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:14px 12px 6px;}
+.sidebar.collapsed .sb-group-label{text-align:center;padding:14px 4px 6px;}
+.sb-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;font-size:13.6px;font-weight:500;color:rgba(255,255,255,.68);margin-bottom:2px;position:relative;transition:.15s;}
+.sb-link:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-link.active{background:rgba(255,255,255,.12);color:#fff;}
+.sb-link.active::before{content:'';position:absolute;left:-12px;top:8px;bottom:8px;width:3.5px;background:var(--olive);border-radius:0 4px 4px 0;}
+.sb-link .ic{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar.collapsed .sb-link{justify-content:center;padding:11px 8px;}
+.sidebar.collapsed .sb-link span.lbl{display:none;}
+.sidebar.collapsed .sb-link.active::before{left:-8px;}
+
+.sb-tooltip{position:fixed;background:var(--navy-900);color:#fff;font-size:12px;padding:6px 10px;border-radius:7px;box-shadow:var(--shadow-lg);z-index:200;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .1s;}
+.sb-tooltip.show{opacity:1;}
+
+.sb-foot{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
+
+.sidebar-backdrop{position:fixed;inset:0;background:rgba(10,18,28,.5);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}
+.sidebar-backdrop.show{opacity:1;pointer-events:all;}
+
+.main{flex:1;min-width:0;margin-left:var(--sbw);transition:margin-left .2s ease;display:flex;flex-direction:column;min-height:100vh;}
+.main.collapsed{margin-left:var(--sbw-collapsed);}
+
+.topbar{height:64px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:60;}
+.icon-btn{position:relative;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--paper-2);font-size:16px;flex-shrink:0;}
+.icon-btn:hover{background:var(--navy-100);}
+.icon-dot{position:absolute;top:6px;right:7px;min-width:8px;height:8px;padding:0 2px;border-radius:100px;background:var(--danger);border:2px solid #fff;font-size:8.5px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.profile-chip{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border-radius:100px;transition:.15s;}
+.profile-chip:hover{background:var(--paper-2);}
+.avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(140deg,var(--navy-700),var(--navy-900));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;}
+.profile-chip .nm{font-size:13px;font-weight:600;}
+.profile-chip .car{font-size:10px;color:var(--ink-soft);}
+
+.dropdown{position:relative;}
+.dd-panel{position:absolute;top:50px;right:0;background:#fff;border-radius:14px;box-shadow:var(--shadow-lg);border:1px solid var(--line);z-index:120;overflow:hidden;}
+.notif-panel{width:340px;}
+.dd-head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;}
+.dd-head button{font-size:11px;color:var(--navy-700);font-weight:700;}
+.notif-list{max-height:340px;overflow-y:auto;}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--paper-2);display:flex;gap:10px;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item .dot{width:7px;height:7px;border-radius:50%;background:var(--olive);margin-top:5px;flex-shrink:0;}
+.notif-item.read .dot{background:var(--gray);}
+.notif-item b{font-size:12.5px;display:block;}
+.notif-item p{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.notif-item span{font-size:10.5px;color:var(--gray);}
+.profile-panel{width:210px;}
+.profile-panel .pp-head{padding:16px;border-bottom:1px solid var(--line);}
+.profile-panel .pp-head b{font-size:13.5px;display:block;}
+.profile-panel .pp-head span{font-size:11.5px;color:var(--ink-soft);}
+.pp-link{display:flex;align-items:center;gap:9px;padding:11px 16px;font-size:13px;font-weight:500;color:var(--ink);}
+.pp-link:hover{background:var(--paper);}
+.pp-link.danger{color:var(--danger);}
+
+.content{padding:26px 28px 40px;max-width:1320px;}
+.page-head{margin-bottom:22px;}
+.page-head h2{font-size:21px;}
+.page-head p{color:var(--ink-soft);font-size:13.5px;margin-top:5px;}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.row-between h3{font-size:16px;}
+.action-cluster{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:19px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);}
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.stat-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.stat-change{font-size:11px;font-weight:700;padding:3px 8px;border-radius:100px;}
+.stat-card b{font-family:'Poppins';font-size:26px;}
+.stat-card span{font-size:12.5px;color:var(--ink-soft);font-weight:500;}
+
+/* card / table */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+.card-pad{padding:22px;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13.3px;}
+thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;padding:12px 15px;border-bottom:1.5px solid var(--line);white-space:nowrap;background:var(--paper);}
+tbody td{padding:12px 15px;border-bottom:1px solid var(--paper-2);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fafbfb;}
+.cell-main{font-weight:600;}
+.cell-sub{color:var(--ink-soft);font-size:11.5px;}
+.act-cell{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* filters bar */
+.filters-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.filters-bar select{padding:9px 11px;border:1.4px solid var(--line);border-radius:9px;font-size:13px;background:#fff;}
+.search-wrap{position:relative;flex:1;min-width:220px;max-width:320px;}
+.search-wrap span{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:13px;}
+.search-wrap input{width:100%;padding:9px 12px 9px 32px;border:1.4px solid var(--line);border-radius:9px;font-size:13px;}
+.search-wrap input:focus,.filters-bar select:focus{outline:none;border-color:var(--navy-700);}
+
+/* progress bars overview */
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.bar-row:last-child{margin-bottom:0;}
+.bar-row .lbl{width:110px;font-size:12.5px;color:var(--ink-soft);font-weight:600;flex-shrink:0;}
+.bar-track{flex:1;height:13px;background:var(--paper-2);border-radius:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:8px;transition:width .5s ease;}
+.bar-row .val{width:42px;text-align:right;font-size:12.5px;font-weight:700;flex-shrink:0;}
+
+/* forms */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.4px solid var(--line);border-radius:9px;font-size:13.5px;background:#fcfdfd;transition:.15s;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--navy-700);background:#fff;}
+.field-err{border-color:var(--danger) !important;}
+.field-err-msg{font-size:11.5px;color:var(--danger);margin-top:5px;display:none;}
+.field-err-msg.show{display:block;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+.radio-row{display:flex;gap:16px;}
+.radio-row label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--ink);}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(15,25,35,.5);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.modal{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal.wide{max-width:680px;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2;}
+.modal-head h3{font-size:16px;}
+.modal-body{padding:20px 22px;}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+.close-x{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--paper-2);font-size:15px;flex-shrink:0;}
+.close-x:hover{background:var(--danger-light);color:var(--danger);}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.kv div{background:var(--paper);padding:10px 12px;border-radius:9px;}
+.kv div span{display:block;font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+.kv div b{font-size:13.5px;}
+.section-sub{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin:18px 0 10px;}
+.section-sub:first-child{margin-top:0;}
+.req-mini-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--paper);border-radius:9px;margin-bottom:7px;font-size:13px;}
+
+/* toast */
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:400;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--navy-900);color:#fff;padding:12px 17px;border-radius:10px;box-shadow:var(--shadow-lg);font-size:13.3px;font-weight:500;display:flex;align-items:center;gap:9px;animation:toastin .25s ease;max-width:320px;}
+.toast.err{background:var(--danger);}
+.toast.warn{background:var(--warning);}
+@keyframes toastin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+
+.empty{text-align:center;padding:44px 20px;color:var(--ink-soft);}
+.empty .ic{font-size:32px;margin-bottom:8px;}
+.empty h4{font-size:14.5px;color:var(--ink);margin-bottom:4px;}
+.empty p{font-size:12.5px;}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.dept-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+.dept-card .ic{width:36px;height:36px;border-radius:9px;background:var(--navy-100);color:var(--navy-700);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px;}
+.dept-card h4{font-size:14.5px;margin-bottom:3px;}
+.dept-card .n{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+.dept-card .row{display:flex;gap:8px;}
+
+.tabs{display:flex;gap:4px;background:var(--paper-2);border-radius:10px;padding:4px;margin-bottom:18px;width:fit-content;}
+.tab-btn{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;color:var(--ink-soft);}
+.tab-btn.active{background:#fff;color:var(--navy-700);box-shadow:var(--shadow);}
+
+.deadline-hero{background:linear-gradient(120deg,var(--navy-900),var(--navy-700));color:#fff;border-radius:var(--radius);padding:26px 28px;margin-bottom:22px;}
+.deadline-hero span{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;opacity:.7;}
+.deadline-hero h2{font-size:26px;margin-top:6px;}
+
+
+/* visual form map builder */
+.map-builder{margin-top:4px}.map-builder-grid{display:grid;grid-template-columns:minmax(260px,1fr) 230px;gap:14px;align-items:start}.map-toolbox,.map-properties,.map-canvas-wrap{border:1px solid var(--line);border-radius:11px;padding:13px;background:#fbfcfc;min-width:0}.map-toolbox>b,.map-properties>b{font-size:11px;letter-spacing:.06em;color:var(--ink-soft);display:block;margin-bottom:11px}.map-add{margin-bottom:8px;white-space:normal;font-size:12px}.map-canvas-head{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:12px}.map-canvas-head span{font-size:11px;color:var(--ink-soft)}.map-canvas{position:relative;display:block;height:620px;min-height:420px;padding:0;border:1px dashed #cbd3d9;border-radius:9px;background-color:#fff;background-image:linear-gradient(#eef1f4 1px,transparent 1px),linear-gradient(90deg,#eef1f4 1px,transparent 1px);background-size:20px 20px;overflow:hidden;user-select:none;touch-action:pan-y}.map-field{position:absolute;box-sizing:border-box;border:1px solid var(--line);border-radius:7px;padding:9px;background:#fff;cursor:move;min-width:90px;min-height:58px;overflow:hidden}.map-field.selected{border:2px solid var(--info);background:#f7faff;z-index:3}.map-field .map-field-actions{display:flex;justify-content:flex-end;gap:3px;margin-top:5px}.map-field .map-field-actions button{padding:2px 5px;font-size:9px}.map-field .map-resize-handle{position:absolute;right:0;bottom:0;width:14px;height:14px;background:var(--info);border-radius:5px 0 5px 0;cursor:nwse-resize}.map-draw-rect{position:absolute;border:2px dashed var(--info);background:#3b82f622;pointer-events:none;z-index:10}.map-canvas-hint{position:absolute;left:12px;bottom:10px;color:#87919b;font-size:11px;pointer-events:none}.map-field>label{display:block;font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}.map-field input:not([type=checkbox]),.map-field textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:#f7f8f8;font-size:12px}.map-field textarea{min-height:58px;resize:none}.map-field-actions{display:flex;justify-content:flex-end;gap:4px;margin-top:8px}.map-field-actions button{padding:4px 7px;border:1px solid var(--line);border-radius:5px;font-size:10px;background:#fff}.map-field-actions button:hover{border-color:var(--info);color:var(--info)}.map-sign{height:54px;border:1px dashed #aeb8c0;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:12px}.map-hidden-title{font-weight:700;color:var(--navy-700);font-size:13px}.map-hidden-title small{font-weight:400;color:var(--gray)}.map-check{font-size:12px}.map-required{display:flex;gap:8px;align-items:center;font-size:12px}.map-properties .field{margin-top:10px;margin-bottom:10px}.map-properties .field label{font-size:11px}.map-properties .field input,.map-properties .field select{font-size:12px;padding:8px}.map-drag-over{outline:2px dashed var(--info);outline-offset:2px}
+@media(max-width:900px){.map-builder-grid{grid-template-columns:1fr}}
+.map-context-menu{position:fixed;z-index:99999;display:none;min-width:190px;padding:7px;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 30px #0002}.map-context-menu.open{display:block}.map-context-menu b{display:block;padding:7px 9px;font-size:10px;color:var(--ink-soft);letter-spacing:.06em}.map-context-menu button{display:block;width:100%;text-align:left;padding:8px 10px;border:0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer}.map-context-menu button:hover{background:#eef4fa;color:var(--info)}
+@media(max-width:520px){.map-canvas{height:560px}}
+
+@media print{
+  .sidebar,.topbar,.no-print{display:none !important;}
+  .main{margin-left:0 !important;}
+  .content{padding:0;max-width:100%;}
+  body{background:#fff;}
+}
+
+@media(max-width:1080px){
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .grid3{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .sidebar{left:calc(-1*var(--sbw));}
+  .sidebar.mobile-open{left:0;}
+  .main,.main.collapsed{margin-left:0;}
+  .grid2{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .stat-grid{grid-template-columns:1fr;}
+  .grid3{grid-template-columns:1fr;}
+  .content{padding:18px;}
+  .topbar{padding:0 16px;}
+  .profile-chip .nm,.profile-chip .car{display:none;}
+  #homeBtnLabel{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="toastWrap" class="toast-wrap"></div>
+<div id="modalRoot"></div>
+<div id="sbBackdrop" class="sidebar-backdrop"></div>
+<div id="app"></div>
+
+<script>
+/* =========================================================================
+   ECLARO ACADEMY — ADMIN DASHBOARD
+   Vanilla HTML/CSS/JS only. Data persisted via localStorage.
+   ========================================================================= */
+
+const LOGO_ICON = "";
+const LOGO_FULL = "";
+const STORAGE_KEY = "eclaro_admin_dashboard_v2";
+const MAP_FIELDS_KEY = "eclaro_clearance_map_fields_v1";
+let mapFields = loadMapFields();
+let selectedMapField = null;
+function loadMapFields(){
+  try{ const saved=JSON.parse(localStorage.getItem(MAP_FIELDS_KEY)||"null"); if(Array.isArray(saved)) return saved.map((f,i)=>({...f,x:f.x??4,y:f.y??(4+i*112),w:f.w??(f.width==='half'?44:92),h:f.h??94})); }catch(e){}
+  return [
+    {id:"mf1",type:"text",label:"Student Name",placeholder:"Enter full name",required:true,width:"full",x:4,y:4,w:92,h:94},
+    {id:"mf2",type:"cell",label:"Cell Number",placeholder:"09XXXXXXXXX",required:true,width:"half",x:4,y:112,w:44,h:94},
+    {id:"mf3",type:"textarea",label:"Purpose / Remarks",placeholder:"Enter details",required:false,width:"full",x:4,y:220,w:92,h:120}
+  ];
+}
+function saveMapFields(){ localStorage.setItem(MAP_FIELDS_KEY,JSON.stringify(mapFields)); }
+function mapFieldTypeName(type){ return ({text:"Text",textarea:"Text Area",cell:"Cell Number",checkbox:"Check Box",signature:"Hand-drawn Signature",hidden:"Hidden Title"})[type]||type; }
+function mapFieldPreview(f){
+  const label=f.type==='hidden'?'':`<label>${escapeMapText(f.label||'Untitled field')}${f.required?' <em style="color:var(--danger)">*</em>':''}</label>`;
+  let control='';
+  if(f.type==='textarea') control=`<textarea disabled placeholder="${escapeMapText(f.placeholder||'')}"></textarea>`;
+  else if(f.type==='checkbox') control=`<label class="map-check"><input type="checkbox" disabled> ${escapeMapText(f.label||'Check box')}</label>`;
+  else if(f.type==='signature') control=`<div class="map-sign">Sign here</div>`;
+  else if(f.type==='hidden') control=`<div class="map-hidden-title">${escapeMapText(f.label||'Section title')} <small>(hidden title)</small></div>`;
+  else control=`<input disabled placeholder="${escapeMapText(f.placeholder||'')}">`;
+  return `<div class="map-field ${selectedMapField===f.id?'selected':''}" style="left:${f.x??4}%;top:${f.y??4}px;width:${f.w??92}%;height:${f.h??94}px" data-map-id="${f.id}">${label}${control}<div class="map-field-actions"><button type="button" data-map-action="delete" data-id="${f.id}">Remove</button></div><span class="map-resize-handle" data-resize-id="${f.id}"></span></div>`;
+}
+function escapeMapText(v){ return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderMapBuilder(){
+ return `<section class="map-builder card card-pad"><div class="row-between"><div><h3>Visual Form Map</h3><p class="cell-sub">Right-click and drag on the blank form to draw a field box. Drag a field to move it; use its bottom-right handle to resize it.</p></div><button class="btn btn-primary btn-sm" id="saveMapFields">Save Form Map</button></div>
+ <div class="map-builder-grid"><div class="map-canvas-wrap"><div class="map-canvas-head"><b>Student Clearance Form</b><span>${mapFields.length} field(s)</span></div><div class="map-canvas" id="mapCanvas" data-map-dropzone="true">${mapFields.map(mapFieldPreview).join('')}<div class="map-canvas-hint">Right-click + drag to draw a new field</div></div></div>
+ <aside class="map-properties"><b>FIELD SETTINGS</b><div id="mapProperties">${selectedMapField&&mapFields.some(f=>f.id===selectedMapField)?renderMapProperties(mapFields.find(f=>f.id===selectedMapField)):'<p class="cell-sub" style="margin-top:12px">Select a field on the form to edit its settings.</p>'}</div></aside></div><div class="map-context-menu" id="mapContextMenu"><b>INSERT FIELD HERE</b>${[['text','Text field'],['textarea','Text area'],['cell','Cell number'],['checkbox','Checkbox'],['signature','Hand-drawn signature'],['hidden','Section title']].map(([t,l])=>`<button type="button" data-context-add="${t}">${l}</button>`).join('')}</div></section>`;
+}
+function renderMapProperties(f){ return `<div class="field"><label>Field type</label><select id="mapType">${[["text","Text field"],["textarea","Text area"],["cell","Cell number"],["checkbox","Checkbox"],["signature","Signature"],["hidden","Section title"]].map(([v,l])=>`<option value="${v}" ${f.type===v?"selected":""}>${l}</option>`).join("")}</select></div><div class="field"><label>Label / Title</label><input id="mapLabel" value="${escapeMapText(f.label||'')}" placeholder="Field label"></div>${f.type!=='hidden'&&f.type!=='checkbox'&&f.type!=='signature'?`<div class="field"><label>Placeholder</label><input id="mapPlaceholder" value="${escapeMapText(f.placeholder||'')}" placeholder="Placeholder text"></div>`:''}<div class="field"><label>Width (%)</label><input id="mapFieldW" type="number" min="10" max="100" value="${Math.round(f.w??92)}"></div><div class="field"><label>Height (px)</label><input id="mapFieldH" type="number" min="50" max="600" value="${Math.round(f.h??94)}"></div><label class="map-required"><input id="mapRequired" type="checkbox" ${f.required?'checked':''} ${['hidden','signature'].includes(f.type)?'disabled':''}> Required field</label><p class="cell-sub" style="margin-top:12px">Changes appear on the form immediately.</p>`; }
+
+
+const DEPARTMENTS = ["ICT"];
+const OFFICES = ["Registrar","Library","Accounting","Laboratory","Guidance","Property"];
+const OFFICE_ICON = {Registrar:"📋",Library:"📚",Accounting:"💳",Laboratory:"🧪",Guidance:"🧭",Property:"🏷️"};
+
+/* ---------------- default demo data ---------------- */
+function defaultData(){
+  const mkClearance = (pattern)=>{
+    const c = {};
+    OFFICES.forEach((o,i)=>c[o]=pattern[i]);
+    return c;
+  };
+  return {
+    students: [
+      {id:"20260001", name:"[No Name]", email:"student01@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Aug 02, 2026"},
+      {id:"20260002", name:"[No Name]", email:"student02@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Jul 28, 2026"},
+      {id:"20260003", name:"[No Name]", email:"student03@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Aug 03, 2026"},
+      {id:"20260004", name:"[No Name]", email:"student04@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Aug 01, 2026"},
+      {id:"20260005", name:"[No Name]", email:"student05@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Jul 25, 2026"},
+      {id:"20260006", name:"[No Name]", email:"student06@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Aug 05, 2026"},
+      {id:"20260007", name:"[No Name]", email:"student07@eclaro.edu.ph", contact:"N/A", department:"ICT", grade:"N/A", section:"N/A", status:"N/A", accountStatus:"N/A",
+        clearance:mkClearance(["N/A","N/A","N/A","N/A","N/A","N/A"]), dateSubmitted:"Aug 04, 2026"},
+    ],
+    admins: [
+      {name:"[No Name]", username:"admin", email:"admin@eclaro.edu.ph", role:"Super Admin"},
+    ],
+    faculty: [
+      {empId:"F-1001", name:"[No Name]", email:"faculty01@eclaro.edu.ph", contact:"N/A", department:"Registrar", designation:"Registrar Officer", campus:"Main Campus", employment:"Permanent"},
+      {empId:"F-1002", name:"[No Name]", email:"faculty02@eclaro.edu.ph", contact:"N/A", department:"Library", designation:"Librarian", campus:"Main Campus", employment:"Part-time"},
+    ],
+    offices: OFFICES.map(o=>({name:o, status:"Active"})),
+    requirements: [
+      {office:"Registrar", requirement:"Academic Records", required:"Yes", status:"Active"},
+      {office:"Library", requirement:"Book Clearance", required:"Yes", status:"Active"},
+      {office:"Accounting", requirement:"Financial Clearance", required:"Yes", status:"Active"},
+      {office:"Laboratory", requirement:"Equipment Clearance", required:"Yes", status:"Active"},
+      {office:"Guidance", requirement:"Guidance Clearance", required:"Yes", status:"Active"},
+      {office:"Property", requirement:"Property Clearance", required:"Yes", status:"Active"},
+    ],
+    clearanceRequests: [
+      {requestId:"REQ-1001", studentId:"20260001", department:"ICT", dateSubmitted:"Aug 10, 2026", currentOffice:"Library", status:"N/A"},
+      {requestId:"REQ-1002", studentId:"20260003", department:"ICT", dateSubmitted:"Aug 10, 2026", currentOffice:"Accounting", status:"N/A"},
+      {requestId:"REQ-1003", studentId:"20260006", department:"ICT", dateSubmitted:"Aug 11, 2026", currentOffice:"Registrar", status:"N/A"},
+      {requestId:"REQ-1004", studentId:"20260007", department:"ICT", dateSubmitted:"Aug 11, 2026", currentOffice:"Library", status:"N/A"},
+    ],
+    notifications: [
+      {title:"New clearance request", text:"[No Name] (20260006) submitted a clearance request.", time:"1h ago", read:false},
+      {title:"Clearance approved", text:"[No Name]'s (20260002) Property requirement was approved.", time:"3h ago", read:false},
+      {title:"Deadline reminder", text:"Clearance deadline is approaching — August 30, 2026.", time:"1d ago", read:false},
+      {title:"Clearance rejected", text:"[No Name]'s (20260004) Registrar requirement was rejected.", time:"2d ago", read:true},
+    ],
+    deadline: {start:"2026-08-01", end:"2026-08-30", schoolYear:"2025-2026"},
+    settings: {},
+  };
+}
+
+let state = loadState();
+state.page = "dashboard";
+state.sidebarCollapsed = false;
+state.sidebarMobileOpen = false;
+state.search = "";
+state.filters = {status:"", department:"", grade:""};
+state.toastId = 0;
+state.reportFilters = {year:"", department:"", grade:"", section:""};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ return JSON.parse(raw); }
+  }catch(e){ console.warn("Could not read saved data, using defaults.", e); }
+  return defaultData();
+}
+function persist(){
+  try{
+    const {page,sidebarCollapsed,sidebarMobileOpen,search,filters,toastId,reportFilters, ...toSave} = state;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  }catch(e){ console.warn("Could not save data.", e); }
+}
+
+/* ---------------- helpers ---------------- */
+function toast(msg, type){
+  const el = document.createElement('div');
+  el.className = 'toast' + (type==='err'?' err':type==='warn'?' warn':'');
+  el.innerHTML = (type==='err'?'✖ ':type==='warn'?'⚠ ':'✓ ') + msg;
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3400);
+}
+function badge(status){
+  const map = {
+    Approved:'b-approved', Completed:'b-completed', Active:'b-active',
+    Pending:'b-pending', "In Progress":'b-progress', Rejected:'b-rejected', Inactive:'b-inactive',
+  };
+  return `<span class="badge ${map[status]||'b-gray'}">${status}</span>`;
+}
+function studentById(id){ return state.students.find(s=>s.id===id); }
+function initialsOf(name){
+  const letters = (name||'').replace(/[^a-zA-Z ]/g,'').trim();
+  if(!letters) return 'NA';
+  return letters.split(' ').filter(Boolean).map(w=>w[0].toUpperCase()).slice(0,2).join('');
+}
+function computeOverallStatus(clearance){
+  const vals = Object.values(clearance);
+  if(vals.every(v=>v==='Approved')) return 'Completed';
+  if(vals.some(v=>v==='Rejected')) return 'Rejected';
+  if(vals.some(v=>v==='Approved')) return 'In Progress';
+  return 'Pending';
+}
+function unreadNotifCount(){ return state.notifications.filter(n=>!n.read).length; }
+
+/* ---------------- NAV CONFIG ---------------- */
+const NAV = [
+  {group:"General", items:[{p:'dashboard', ic:'🏠', label:'Home'}]},
+  {group:"Clearance Management", items:[
+    {p:'clearance', ic:'📋', label:'Student Clearance'},
+    {p:'students', ic:'🎓', label:'Students'},
+    {p:'departments', ic:'🏢', label:'Departments/Offices'},
+    {p:'requirements', ic:'📄', label:'Requirements'},
+    {p:'deadline', ic:'⏰', label:'Set Deadline'},
+  ]},
+  {group:"Reports", items:[
+    {p:'reports', ic:'📊', label:'Clearance Reports'},
+    {p:'cleared', ic:'✅', label:'Cleared Students'},
+    {p:'pending', ic:'⏳', label:'Pending Clearance'},
+    {p:'rejected', ic:'❌', label:'Rejected Clearance'},
+  ]},
+  {group:"System", items:[
+    {p:'adminusers', ic:'👤', label:'Admin Users'},
+    {p:'settings', ic:'⚙️', label:'Settings'},
+    {p:'logout', ic:'🚪', label:'Logout'},
+  ]},
+];
+const TITLES = {
+  dashboard:['Admin Dashboard','Monitor and manage student clearance requests across all departments.'],
+  clearance:['Student Clearance','Review and process clearance requests from every office.'],
+  students:['Students','Manage student accounts and their clearance status.'],
+  departments:['Departments & Offices','Manage the offices involved in the clearance workflow.'],
+  requirements:['Clearance Requirements','Configure the requirements each office checks for.'],
+  deadline:['Clearance Deadline','Set the submission window for the current school year.'],
+  reports:['Clearance Reports','A full overview of clearance activity across the school.'],
+  cleared:['Cleared Students','Students who have completed every clearance requirement.'],
+  pending:['Pending Clearance','Students still missing one or more requirements.'],
+  rejected:['Rejected Clearance','Requests that were rejected and need student action.'],
+  adminusers:['Admin Users','Manage administrator accounts and access roles.'],
+  settings:['Settings','System preferences and demo data controls.'],
+};
+
+/* =========================================================================
+   RENDER ROOT
+   ========================================================================= */
+function render(){
+  persist();
+  const app = document.getElementById('app');
+  app.innerHTML = renderShell();
+  attachEvents();
+}
+
+function renderShell(){
+  const collapsedCls = state.sidebarCollapsed ? 'collapsed' : '';
+  const mobileCls = state.sidebarMobileOpen ? 'mobile-open' : '';
+  return `
+  <div class="sidebar ${collapsedCls} ${mobileCls}" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo"><img src="${LOGO_ICON}" alt="Eclaro Academy"></div>
+      <div class="sb-name">Eclaro Academy<span>Admin Console</span></div>
+    </div>
+    <div class="sb-profile">
+      <div class="sb-avatar">${initialsOf(state.admins[0]?.name)}</div>
+      <span class="wl">Welcome,</span>
+      <b>${state.admins[0]?.name || 'Admin'}</b>
+    </div>
+    <nav class="sb-nav">
+      ${NAV.map(g=>`
+        <div class="sb-group-label">${state.sidebarCollapsed?'•':g.group}</div>
+        ${g.items.map(it=>`<a href="#" class="sb-link ${state.page===it.p?'active':''}" data-page="${it.p}" data-tip="${it.label}">
+          <span class="ic">${it.ic}</span><span class="lbl">${it.label}</span>
+        </a>`).join('')}
+      `).join('')}
+    </nav>
+    <div class="sb-foot">
+      <a href="clearance-system.html" class="sb-link" data-tip="Back to Main Portal">
+        <span class="ic">↩️</span><span class="lbl">Back to Main Portal</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="main ${collapsedCls}" id="mainArea">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <button class="icon-btn" id="hamburgerBtn">☰</button>
+        <a href="clearance-system.html" class="btn btn-outline btn-sm" style="gap:6px;">🏠 <span id="homeBtnLabel">Homepage / Dashboard</span></a>
+        <h2 style="font-size:16px;">${TITLES[state.page] ? TITLES[state.page][0] : ''}</h2>
+      </div>
+      <div class="topbar-right">
+        <div class="dropdown">
+          <button class="icon-btn" id="notifBtn">🔔${unreadNotifCount()>0?`<span class="icon-dot">${unreadNotifCount()}</span>`:''}</button>
+          <div class="dd-panel notif-panel hidden" id="notifPanel">
+            <div class="dd-head">Notifications <button id="markAllReadBtn">Mark all as read</button></div>
+            <div class="notif-list">
+              ${state.notifications.length ? state.notifications.map(n=>`
+                <div class="notif-item ${n.read?'read':''}"><div class="dot"></div>
+                  <div><b>${n.title}</b><p>${n.text}</p><span>${n.time}</span></div>
+                </div>`).join('') : `<div class="empty" style="padding:26px;"><div class="ic">🔔</div><p>No notifications</p></div>`}
+            </div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="profile-chip" id="profileBtn">
+            <div class="avatar-sm">${initialsOf(state.admins[0]?.name)}</div>
+            <div><div class="nm">${state.admins[0]?.name||'Admin'}</div><div class="car">${state.admins[0]?.role||'Administrator'}</div></div>
+            <span style="font-size:10px;color:var(--ink-soft);">▼</span>
+          </button>
+          <div class="dd-panel profile-panel hidden" id="profilePanel">
+            <div class="pp-head"><b>${state.admins[0]?.name||'Admin'}</b><span>Administrator</span></div>
+            <a href="#" class="pp-link" id="viewProfileBtn">👤 View Profile</a>
+            <a href="#" class="pp-link" data-page="settings" id="acctSettingsBtn">⚙️ Account Settings</a>
+            <a href="#" class="pp-link danger" id="logoutBtn2">🚪 Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      ${state.page==='logout' ? renderLogout() : renderPage()}
+    </div>
+  </div>
+  `;
+}
+
+function renderPage(){
+  switch(state.page){
+    case 'dashboard': return pageDashboard();
+    case 'clearance': return pageClearance();
+    case 'students': return pageStudents();
+    case 'departments': return pageDepartments();
+    case 'requirements': return pageRequirements();
+    case 'deadline': return pageDeadline();
+    case 'reports': return pageReports();
+    case 'cleared': return pageCleared();
+    case 'pending': return pagePending();
+    case 'rejected': return pageRejected();
+    case 'adminusers': return pageAdminUsers();
+    case 'settings': return pageSettings();
+    default: return pageDashboard();
+  }
+}
+
+/* =========================================================================
+   PAGE: DASHBOARD
+   ========================================================================= */
+function pageDashboard(){
+  const total = state.students.length;
+  const pending = state.students.filter(s=>s.status==='Pending').length;
+  const completed = state.students.filter(s=>s.status==='Completed').length;
+  const rejected = state.students.filter(s=>s.status==='Rejected').length;
+  const inprogress = state.students.filter(s=>s.status==='In Progress').length;
+  const pct = n => total ? Math.round(n/total*100) : 0;
+
+  return `
+  <div class="page-head"><h2>${TITLES.dashboard[0]}</h2><p>${TITLES.dashboard[1]}</p></div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-top"><div class="stat-ic" style="background:var(--navy-100);color:var(--navy-700);">🎓</div><span class="stat-change" style="background:var(--success-light);color:var(--success);">Live</span></div><b>${total.toLocaleString()}</b><span>Total Students</span></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-ic" style="background:var(--warning-light);color:var(--warning);">⏳</div><span class="stat-change" style="background:var(--warning-light);color:var(--warning);">${pct(pending)}%</span></div><b>${pending.toLocaleString()}</b><span>Pending Clearance</span></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-ic" style="background:var(--success-light);color:var(--success);">✅</div><span class="stat-change" style="background:var(--success-light);color:var(--success);">${pct(completed)}%</span></div><b>${completed.toLocaleString()}</b><span>Completed Clearance</span></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-ic" style="background:var(--danger-light);color:var(--danger);">✖</div><span class="stat-change" style="background:var(--danger-light);color:var(--danger);">${pct(rejected)}%</span></div><b>${rejected.toLocaleString()}</b><span>Rejected</span></div>
+  </div>
+
+  <div class="grid2" style="align-items:flex-start;">
+    <div class="card card-pad">
+      <h3 style="margin-bottom:18px;">Clearance Overview</h3>
+      <div class="bar-row"><div class="lbl">Completed</div><div class="bar-track"><div class="bar-fill" style="width:${pct(completed)}%;background:var(--success);"></div></div><div class="val">${pct(completed)}%</div></div>
+      <div class="bar-row"><div class="lbl">In Progress</div><div class="bar-track"><div class="bar-fill" style="width:${pct(inprogress)}%;background:var(--info);"></div></div><div class="val">${pct(inprogress)}%</div></div>
+      <div class="bar-row"><div class="lbl">Pending</div><div class="bar-track"><div class="bar-fill" style="width:${pct(pending)}%;background:var(--warning);"></div></div><div class="val">${pct(pending)}%</div></div>
+      <div class="bar-row"><div class="lbl">Rejected</div><div class="bar-track"><div class="bar-fill" style="width:${pct(rejected)}%;background:var(--danger);"></div></div><div class="val">${pct(rejected)}%</div></div>
+    </div>
+    <div class="card card-pad">
+      <h3 style="margin-bottom:14px;">Recent Clearance Requests</h3>
+      ${state.clearanceRequests.slice(0,4).map(r=>{
+        const s = studentById(r.studentId);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--paper-2);">
+          <div><b style="font-size:13px;">${s?s.name:r.studentId}</b><div class="cell-sub mono">${r.requestId} · ${r.currentOffice}</div></div>
+          ${badge(r.status)}
+        </div>`;
+      }).join('') || `<div class="empty"><p>No recent requests.</p></div>`}
+    </div>
+  </div>
+
+  <div class="row-between" style="margin-top:24px;"><h3>Student Clearance List</h3><a href="#" class="btn btn-outline btn-sm" data-page="students">View all →</a></div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Grade</th><th>Status</th></tr></thead>
+      <tbody>${state.students.slice(0,5).map(s=>`<tr><td class="mono cell-sub">${s.id}</td><td class="cell-main">${s.name}</td><td>${s.department}</td><td>${s.grade}</td><td>${badge(s.status)}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  `;
+}
+
+/*PAGE: STUDENTS*/
+function filteredStudents(){
+  const q = state.search.toLowerCase();
+  return state.students.filter(s=>{
+    const matchQ = !q || s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.department.toLowerCase().includes(q) || s.section.toLowerCase().includes(q);
+    const matchStatus = !state.filters.status || s.status===state.filters.status;
+    const matchDept = !state.filters.department || s.department===state.filters.department;
+    const matchGrade = !state.filters.grade || s.grade===state.filters.grade;
+    return matchQ && matchStatus && matchDept && matchGrade;
+  });
+}
+function pageStudents(){
+  return `
+  <div class="page-head"><h2>${TITLES.students[0]}</h2><p>${TITLES.students[1]}</p></div>
+  <div class="row-between">
+    <h3>Student Clearance List</h3>
+    <div class="action-cluster">
+      <button class="btn btn-outline btn-sm" id="exportStudentsBtn">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" id="addStudentBtn">+ Add Student</button>
+    </div>
+  </div>
+  <div class="filters-bar">
+    <div class="search-wrap"><span>🔎</span><input id="studentSearchInput" placeholder="Search students..." value="${state.search}"></div>
+    <select id="statusFilterSel">
+      <option value="">All Statuses</option>
+      ${['Pending','In Progress','Approved','Completed','Rejected'].map(s=>`<option ${state.filters.status===s?'selected':''}>${s}</option>`).join('')}
+    </select>
+    <select id="deptFilterSel">
+      <option value="">All Departments</option>
+      ${DEPARTMENTS.map(d=>`<option ${state.filters.department===d?'selected':''}>${d}</option>`).join('')}
+    </select>
+    <select id="gradeFilterSel">
+      <option value="">All Grades</option>
+      <option ${state.filters.grade==='Grade 11'?'selected':''}>Grade 11</option>
+      <option ${state.filters.grade==='Grade 12'?'selected':''}>Grade 12</option>
+    </select>
+  </div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Contact</th><th>Department</th><th>Grade</th><th>Section</th><th>Status</th><th>Account</th><th>Action</th></tr></thead>
+      <tbody id="studentsTbody">${renderStudentRows()}</tbody>
+    </table>
+  </div>`;
+}
+function renderStudentRows(){
+  const list = filteredStudents();
+  if(!list.length) return `<tr><td colspan="10"><div class="empty"><div class="ic">🔍</div><h4>No students found</h4><p>Try adjusting your search or filters.</p></div></td></tr>`;
+  return list.map(s=>`<tr>
+    <td class="mono cell-sub">${s.id}</td><td class="cell-main">${s.name}</td><td class="cell-sub">${s.email}</td><td class="cell-sub">${s.contact}</td>
+    <td>${s.department}</td><td>${s.grade}</td><td>${s.section}</td><td>${badge(s.status)}</td><td>${badge(s.accountStatus)}</td>
+    <td><div class="act-cell">
+      <button class="btn btn-info btn-xs" data-action="view-student" data-id="${s.id}">👁 View</button>
+      <button class="btn btn-success btn-xs" data-action="edit-student" data-id="${s.id}">✏ Edit</button>
+      <button class="btn btn-danger btn-xs" data-action="deactivate-student" data-id="${s.id}" ${s.accountStatus==='Inactive'?'disabled':''}>✖ Deactivate</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+/* =========================================================================
+   PAGE: STUDENT CLEARANCE (requests queue)
+   ========================================================================= */
+function pageClearance(){
+  return `
+  <div class="page-head"><h2>${TITLES.clearance[0]}</h2><p>${TITLES.clearance[1]}</p></div>
+  <div class="row-between"><h3>Clearance Requests</h3><span class="badge b-progress">${state.clearanceRequests.filter(r=>r.status==='Pending').length} pending</span></div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Request ID</th><th>Student</th><th>Department</th><th>Date Submitted</th><th>Current Office</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="clearanceTbody">${renderClearanceRows()}</tbody>
+    </table>
+  </div>`;
+}
+function renderClearanceRows(){
+  if(!state.clearanceRequests.length) return `<tr><td colspan="7"><div class="empty"><div class="ic">📭</div><h4>No clearance requests</h4></div></td></tr>`;
+  return state.clearanceRequests.map(r=>{
+    const s = studentById(r.studentId);
+    return `<tr>
+      <td class="mono cell-sub">${r.requestId}</td>
+      <td class="cell-main">${s?s.name:r.studentId}<br><span class="cell-sub mono">${r.studentId}</span></td>
+      <td>${r.department}</td><td>${r.dateSubmitted}</td>
+      <td>${OFFICE_ICON[r.currentOffice]||''} ${r.currentOffice}</td>
+      <td>${badge(r.status)}</td>
+      <td><div class="act-cell">
+        <button class="btn btn-info btn-xs" data-action="view-request" data-id="${r.requestId}">👁 View</button>
+        <button class="btn btn-success btn-xs" data-action="approve-request" data-id="${r.requestId}" ${r.status!=='Pending'?'disabled':''}>✓ Approve</button>
+        <button class="btn btn-danger btn-xs" data-action="reject-request" data-id="${r.requestId}" ${r.status!=='Pending'?'disabled':''}>✖ Reject</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* =========================================================================
+   PAGE: DEPARTMENTS
+   ========================================================================= */
+function pageDepartments(){
+  return `
+  <div class="page-head"><h2>${TITLES.departments[0]}</h2><p>${TITLES.departments[1]}</p></div>
+  <div class="row-between"><h3>Offices</h3><button class="btn btn-primary btn-sm" id="addOfficeBtn">+ Add Office</button></div>
+  <div class="grid3" id="deptGrid">${renderDeptCards()}</div>`;
+}
+function renderDeptCards(){
+  return state.offices.map(o=>{
+    const load = state.students.filter(s=>Object.keys(s.clearance||{}).length && s.clearance[o.name]==='Pending').length;
+    return `<div class="dept-card">
+      <div class="ic">${OFFICE_ICON[o.name]||'🏢'}</div>
+      <h4>${o.name}</h4>
+      <div class="n">${load} pending review(s) · ${badge(o.status)}</div>
+      <div class="row">
+        <button class="btn btn-outline btn-xs" data-action="edit-office" data-name="${o.name}">✏ Edit</button>
+        <button class="btn btn-danger btn-xs" data-action="toggle-office" data-name="${o.name}">${o.status==='Active'?'✖ Deactivate':'✓ Activate'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* =========================================================================
+   PAGE: REQUIREMENTS
+   ========================================================================= */
+function pageRequirements(){
+  return `
+  <div class="page-head"><h2>Clearance File Designer</h2><p>Upload the actual clearance document, then place and size form fields directly on top of it.</p></div>
+  <div class="card card-pad" style="max-width:900px;margin-top:18px">
+    <h3 style="margin-bottom:8px">Upload Clearance File</h3>
+    <p class="cell-sub" style="margin-bottom:18px">Choose a PDF or image of the clearance form. It will open in the visual editor so you can map fields over the document you uploaded.</p>
+    <label for="clearanceFileUpload" style="display:block;border:2px dashed #b8c6d2;border-radius:12px;padding:30px;text-align:center;background:#f8fafb;cursor:pointer">
+      <div style="font-size:34px;margin-bottom:8px">📄</div><strong>Choose a clearance file</strong><div class="cell-sub" style="margin-top:6px">PDF, PNG, JPG, or WEBP</div>
+      <input id="clearanceFileUpload" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" style="display:block;margin:14px auto 0;max-width:100%">
+    </label>
+    <p id="clearanceUploadStatus" class="cell-sub" style="margin-top:12px">After selecting a file, click “Open Visual Editor”.</p>
+    <div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="btn btn-primary" id="openClearanceEditorBtn" disabled>Open Visual Editor ↗</button></div>
+  </div>`;
+}
+function renderRequirementRows(){
+  if(!state.requirements.length) return `<tr><td colspan="5"><div class="empty"><p>No requirements configured.</p></div></td></tr>`;
+  return state.requirements.map((r,i)=>`<tr>
+    <td class="cell-main">${OFFICE_ICON[r.office]||''} ${r.office}</td><td>${r.requirement}</td><td>${r.required}</td><td>${badge(r.status)}</td>
+    <td><div class="act-cell">
+      <button class="btn btn-success btn-xs" data-action="edit-req" data-i="${i}">✏ Edit</button>
+      <button class="btn btn-danger btn-xs" data-action="toggle-req" data-i="${i}">${r.status==='Active'?'✖ Deactivate':'✓ Activate'}</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+/* =========================================================================
+   PAGE: DEADLINE
+   ========================================================================= */
+function pageDeadline(){
+  const d = state.deadline;
+  const fmt = (iso)=>{ if(!iso) return '—'; const dt = new Date(iso+'T00:00:00'); return dt.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); };
+  return `
+  <div class="page-head"><h2>${TITLES.deadline[0]}</h2><p>${TITLES.deadline[1]}</p></div>
+  <div class="deadline-hero">
+    <span>Current Deadline · SY ${d.schoolYear}</span>
+    <h2>${fmt(d.end)}</h2>
+  </div>
+  <div class="card card-pad" style="max-width:520px;">
+    <h3 style="margin-bottom:16px;">Update Deadline</h3>
+    <form id="deadlineForm">
+      <div class="field"><label>School Year</label>
+        <select id="dlYear">
+          <option ${d.schoolYear==='2025-2026'?'selected':''}>2026-2027</option>
+          <option ${d.schoolYear==='2026-2027'?'selected':''}>2026-2027</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Start Date</label><input type="date" id="dlStart" value="${d.start}" required></div>
+        <div class="field"><label>Deadline Date</label><input type="date" id="dlEnd" value="${d.end}" required></div>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Save Deadline</button>
+    </form>
+  </div>`;
+}
+
+/*PAGE: REPORTS*/
+function pageReports(){
+  const list = state.students.filter(s=>{
+    const rf = state.reportFilters;
+    return (!rf.department||s.department===rf.department) && (!rf.grade||s.grade===rf.grade);
+  });
+  const total = list.length;
+  const completed = list.filter(s=>s.status==='Completed').length;
+  const pending = list.filter(s=>s.status==='Pending').length;
+  const inprogress = list.filter(s=>s.status==='In Progress').length;
+  const rejected = list.filter(s=>s.status==='Rejected').length;
+  const rate = total? Math.round(completed/total*100) : 0;
+  const deptBars = DEPARTMENTS.map(d=>({l:d, v: list.filter(s=>s.department===d).length}));
+  const maxDept = Math.max(1, ...deptBars.map(b=>b.v));
+
+  return `
+  <div class="page-head no-print"><h2>${TITLES.reports[0]}</h2><p>${TITLES.reports[1]}</p></div>
+  <div class="filters-bar no-print">
+    <select id="rfYear"><option>2025-2026</option><option>2024-2025</option></select>
+    <select id="rfDept"><option value="">All Departments</option>${DEPARTMENTS.map(d=>`<option ${state.reportFilters.department===d?'selected':''}>${d}</option>`).join('')}</select>
+    <select id="rfGrade"><option value="">All Grades</option><option ${state.reportFilters.grade==='Grade 11'?'selected':''}>Grade 11</option><option ${state.reportFilters.grade==='Grade 12'?'selected':''}>Grade 12</option></select>
+    <select id="rfSection"><option value="">All Sections</option></select>
+    <button class="btn btn-outline btn-sm" id="printReportBtn" style="margin-left:auto;">🖨 Print Report</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><b>${total}</b><span>Total Students</span></div>
+    <div class="stat-card"><b>${total}</b><span>Total Clearance Requests</span></div>
+    <div class="stat-card"><b>${completed}</b><span>Completed</span></div>
+    <div class="stat-card"><b>${rate}%</b><span>Completion Percentage</span></div>
+  </div>
+  <div class="grid2">
+    <div class="card card-pad">
+      <h3 style="margin-bottom:16px;">Requests by Status</h3>
+      <div class="bar-row"><div class="lbl">n/a</div><div class="bar-track"><div class="bar-fill" style="width:${total?completed/total*100:0}%;background:var(--success);"></div></div><div class="val">${completed}</div></div>
+      <div class="bar-row"><div class="lbl">n/a</div><div class="bar-track"><div class="bar-fill" style="width:${total?inprogress/total*100:0}%;background:var(--info);"></div></div><div class="val">${inprogress}</div></div>
+      <div class="bar-row"><div class="lbl">n/a</div><div class="bar-track"><div class="bar-fill" style="width:${total?pending/total*100:0}%;background:var(--warning);"></div></div><div class="val">${pending}</div></div>
+      <div class="bar-row"><div class="lbl">n/a</div><div class="bar-track"><div class="bar-fill" style="width:${total?rejected/total*100:0}%;background:var(--danger);"></div></div><div class="val">${rejected}</div></div>
+    </div>
+    <div class="card card-pad">
+      <h3 style="margin-bottom:16px;">Students by Department</h3>
+      ${deptBars.map(b=>`<div class="bar-row"><div class="lbl">${b.l}</div><div class="bar-track"><div class="bar-fill" style="width:${b.v/maxDept*100}%;background:var(--olive);"></div></div><div class="val">${b.v}</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/*PAGE: CLEARED / PENDING / REJECTED*/
+function pageCleared(){
+  const list = state.students.filter(s=>s.status==='Completed');
+  return `
+  <div class="page-head"><h2>${TITLES.cleared[0]}</h2><p>${TITLES.cleared[1]}</p></div>
+  <div class="card table-wrap">
+    <table><thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Grade</th><th>Section</th><th>Completion Date</th><th>Action</th></tr></thead>
+    <tbody>${list.length? list.map(s=>`<tr>
+      <td class="mono cell-sub">${s.id}</td><td class="cell-main">${s.name}</td><td>${s.department}</td><td>${s.grade}</td><td>${s.section}</td><td>${s.dateCompleted||'—'}</td>
+      <td><div class="act-cell">
+        <button class="btn btn-info btn-xs" data-action="view-student" data-id="${s.id}">👁 View Clearance</button>
+        <button class="btn btn-outline btn-xs" data-action="print-clearance" data-id="${s.id}">🖨 Print</button>
+      </div></td>
+    </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ic">✅</div><h4>No completed clearances yet</h4></div></td></tr>`}</tbody></table>
+  </div>`;
+}
+function pagePending(){
+  const list = state.students.filter(s=>s.status==='Pending' || s.status==='In Progress');
+  return `
+  <div class="page-head"><h2>${TITLES.pending[0]}</h2><p>${TITLES.pending[1]}</p></div>
+  <div class="card table-wrap">
+    <table><thead><tr><th>Student</th><th>Missing Office(s)</th><th>Current Status</th><th>Date Submitted</th><th>Action</th></tr></thead>
+    <tbody>${list.length? list.map(s=>{
+      const missing = Object.entries(s.clearance).filter(([o,st])=>st!=='Approved').map(([o])=>o);
+      return `<tr>
+        <td class="cell-main">${s.name}<br><span class="cell-sub mono">${s.id}</span></td>
+        <td class="cell-sub">${missing.join(', ')||'—'}</td>
+        <td>${badge(s.status)}</td><td>${s.dateSubmitted}</td>
+        <td><button class="btn btn-info btn-xs" data-action="view-student" data-id="${s.id}">👁 View Details</button></td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="5"><div class="empty"><div class="ic">⏳</div><h4>Nothing pending</h4></div></td></tr>`}</tbody></table>
+  </div>`;
+}
+function pageRejected(){
+  const list = state.students.filter(s=>s.status==='Rejected');
+  return `
+  <div class="page-head"><h2>${TITLES.rejected[0]}</h2><p>${TITLES.rejected[1]}</p></div>
+  <div class="card table-wrap">
+    <table><thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Reason</th><th>Action</th></tr></thead>
+    <tbody>${list.length? list.map(s=>`<tr>
+      <td class="mono cell-sub">${s.id}</td><td class="cell-main">${s.name}</td><td>${s.department}</td><td class="cell-sub">${s.rejectReason||'—'}</td>
+      <td><button class="btn btn-info btn-xs" data-action="view-student" data-id="${s.id}">👁 View</button></td>
+    </tr>`).join('') : `<tr><td colspan="5"><div class="empty"><div class="ic">❌</div><h4>No rejected clearances</h4></div></td></tr>`}</tbody></table>
+  </div>`;
+}
+
+/* =========================================================================
+   PAGE: ADMIN USERS
+   ========================================================================= */
+function pageAdminUsers(){
+  return `
+  <div class="page-head"><h2>Admin Users</h2><p>Manage administrator accounts and access roles.</p></div>
+  <div class="row-between"><h3>Administrator Accounts</h3><button class="btn btn-primary btn-sm" id="addAdminBtn">+ Add Admin User</button></div>
+  <div class="card table-wrap"><table>
+    <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th></tr></thead>
+    <tbody>${state.admins.map(a=>`<tr><td class="cell-main">${a.name}</td><td class="mono cell-sub">${a.username}</td><td class="cell-sub">${a.email}</td><td>${badge('Active')} ${a.role}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+/* =========================================================================
+   PAGE: SETTINGS
+   ========================================================================= */
+function pageSettings(){
+  return `
+  <div class="page-head"><h2>${TITLES.settings[0]}</h2><p>${TITLES.settings[1]}</p></div>
+  <div class="card card-pad" style="max-width:520px;margin-bottom:18px;">
+    <h3 style="margin-bottom:14px;">Account</h3>
+    <div class="kv" style="grid-template-columns:1fr;">
+      <div><span>Administrator</span><b>${state.admins[0]?.name}</b></div>
+      <div><span>Email</span><b>${state.admins[0]?.email}</b></div>
+    </div>
+  </div>
+  <div class="card card-pad" style="max-width:520px;border-color:var(--danger-light);">
+    <h3 style="margin-bottom:6px;color:var(--danger);">Reset Demo Data</h3>
+    <p class="cell-sub" style="margin-bottom:14px;">This clears everything you've changed and restores the original demo dataset. This cannot be undone.</p>
+    <button class="btn btn-danger" id="resetDataBtn">Reset Demo Data</button>
+  </div>`;
+}
+
+function renderLogout(){
+  return `<div class="empty" style="padding:100px 20px;">
+    <div class="ic">🚪</div><h4>You have been logged out</h4><p style="margin-bottom:16px;">This is a front-end demo — no real session was active.</p>
+    <button class="btn btn-primary" id="backToDashBtn">Return to Dashboard</button>
+  </div>`;
+}
+
+/* =========================================================================
+   MODALS
+   ========================================================================= */
+function openModal(html, wide){
+  document.getElementById('modalRoot').innerHTML = `<div class="modal-bg" id="modalBg"><div class="modal ${wide?'wide':''}">${html}</div></div>`;
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+
+function modalAddStudent(){
+  openModal(`
+    <div class="modal-head"><h3>Add Student</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <form id="addStudentForm">
+        <div class="grid2">
+          <div class="field"><label>Student ID</label><input id="asId" required></div>
+          <div class="field"><label>Full Name</label><input id="asName" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Email</label><input type="email" id="asEmail" required></div>
+          <div class="field"><label>Contact Number</label><input id="asContact" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Department</label><select id="asDept">${DEPARTMENTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
+          <div class="field"><label>Grade/Year</label><select id="asGrade"><option>Grade 11</option><option>Grade 12</option></select></div>
+        </div>
+        <div class="field"><label>Section</label><input id="asSection" required></div>
+        <div class="field-err-msg show" id="asErr" style="display:none;">Please complete all required fields.</div>
+      </form>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="asSubmit">Add Student</button></div>
+  `);
+}
+
+function modalEditStudent(id){
+  const s = studentById(id); if(!s) return;
+  openModal(`
+    <div class="modal-head"><h3>Edit Student</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <form id="editStudentForm">
+        <div class="field"><label>Full Name</label><input id="esName" value="${s.name}" required></div>
+        <div class="grid2">
+          <div class="field"><label>Email</label><input type="email" id="esEmail" value="${s.email}" required></div>
+          <div class="field"><label>Contact Number</label><input id="esContact" value="${s.contact}" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Department</label><select id="esDept">${DEPARTMENTS.map(d=>`<option ${d===s.department?'selected':''}>${d}</option>`).join('')}</select></div>
+          <div class="field"><label>Grade/Year</label><select id="esGrade"><option ${s.grade==='Grade 11'?'selected':''}>Grade 11</option><option ${s.grade==='Grade 12'?'selected':''}>Grade 12</option></select></div>
+        </div>
+        <div class="field"><label>Section</label><input id="esSection" value="${s.section}" required></div>
+      </form>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="esSubmit" data-id="${id}">Save Changes</button></div>
+  `);
+}
+
+function modalViewStudent(id){
+  const s = studentById(id); if(!s) return;
+  const reqRows = Object.entries(s.clearance).map(([o,st])=>`<div class="req-mini-row"><span>${OFFICE_ICON[o]||''} ${o}</span>${badge(st)}</div>`).join('');
+  openModal(`
+    <div class="modal-head"><h3>Student Clearance Details</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <div class="section-sub">Student Information</div>
+      <div class="kv">
+        <div><span>ID Number</span><b class="mono">${s.id}</b></div><div><span>Status</span><b>${badge(s.status)}</b></div>
+        <div><span>Name</span><b>${s.name}</b></div><div><span>Email</span><b>${s.email}</b></div>
+        <div><span>Contact</span><b>${s.contact}</b></div><div><span>Department</span><b>${s.department}</b></div>
+        <div><span>Grade/Year</span><b>${s.grade}</b></div><div><span>Section</span><b>${s.section}</b></div>
+      </div>
+      <div class="section-sub">Clearance Requirements</div>
+      ${reqRows}
+      ${s.rejectReason? `<div class="section-sub">Rejection Reason</div><p style="font-size:13px;color:var(--ink-soft);">${s.rejectReason}</p>`:''}
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Close</button></div>
+  `, true);
+}
+
+function modalDeactivateStudent(id){
+  const s = studentById(id); if(!s) return;
+  openModal(`
+    <div class="modal-body" style="text-align:center;padding-top:28px;">
+      <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+      <h3 style="margin-bottom:6px;">Are you sure you want to deactivate this student?</h3>
+      <p class="cell-sub">${s.name} (${s.id}) will be marked Inactive. Their record will not be deleted.</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-danger" id="confirmDeactivate" data-id="${id}">Deactivate</button></div>
+  `);
+}
+
+function modalAddAdmin(){
+  openModal(`
+    <div class="modal-head"><h3>Add Admin User</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <form id="addAdminForm">
+        <div class="field"><label>Full Name</label><input id="aaName" required></div>
+        <div class="grid2">
+          <div class="field"><label>Username</label><input id="aaUser" required></div>
+          <div class="field"><label>Email</label><input type="email" id="aaEmail" required></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Password</label><input type="password" id="aaPass" required></div>
+          <div class="field"><label>Role</label><select id="aaRole"><option>Administrator</option><option>Super Admin</option><option>Moderator</option></select></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="aaSubmit">Create Admin</button></div>
+  `);
+}
+
+
+function modalViewRequest(reqId){
+  const r = state.clearanceRequests.find(x=>x.requestId===reqId); if(!r) return;
+  const s = studentById(r.studentId);
+  openModal(`
+    <div class="modal-head"><h3>${r.requestId}</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <div class="kv">
+        <div><span>Student</span><b>${s?s.name:r.studentId}</b></div><div><span>ID</span><b class="mono">${r.studentId}</b></div>
+        <div><span>Department</span><b>${r.department}</b></div><div><span>Current Office</span><b>${r.currentOffice}</b></div>
+        <div><span>Date Submitted</span><b>${r.dateSubmitted}</b></div><div><span>Status</span><b>${badge(r.status)}</b></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Close</button></div>
+  `);
+}
+
+function modalApproveRequest(reqId){
+  openModal(`
+    <div class="modal-body" style="text-align:center;padding-top:28px;">
+      <div style="font-size:36px;margin-bottom:10px;">✅</div>
+      <h3 style="margin-bottom:6px;">Approve this clearance requirement?</h3>
+      <p class="cell-sub">This will mark the current office's requirement as approved for this student.</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-success" id="confirmApprove" data-id="${reqId}">Approve</button></div>
+  `);
+}
+
+function modalRejectRequest(reqId){
+  openModal(`
+    <div class="modal-head"><h3>Reject Clearance</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Reason for rejection</label><textarea id="rejectReason" rows="3" placeholder="Explain what the student needs to resolve..." required></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-danger" id="confirmReject" data-id="${reqId}">Reject Clearance</button></div>
+  `);
+}
+
+function modalAddOffice(){
+  openModal(`
+    <div class="modal-head"><h3>Add Office</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body"><form id="addOfficeForm"><div class="field"><label>Office Name</label><input id="aoName" required></div></form></div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="aoSubmit">Add Office</button></div>
+  `);
+}
+function modalEditOffice(name){
+  openModal(`
+    <div class="modal-head"><h3>Edit Office</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body"><form id="editOfficeForm"><div class="field"><label>Office Name</label><input id="eoName" value="${name}" required></div></form></div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="eoSubmit" data-orig="${name}">Save Changes</button></div>
+  `);
+}
+
+function modalAddRequirement(){
+  openModal(`
+    <div class="modal-head"><h3>Add Requirement</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <form id="addReqForm">
+        <div class="field"><label>Office</label><select id="arOffice">${OFFICES.map(o=>`<option>${o}</option>`).join('')}</select></div>
+        <div class="field"><label>Requirement</label><input id="arName" required></div>
+        <div class="field"><label>Required</label><select id="arRequired"><option>Yes</option><option>No</option></select></div>
+      </form>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="arSubmit">Add Requirement</button></div>
+  `);
+}
+function modalEditRequirement(i){
+  const r = state.requirements[i]; if(!r) return;
+  openModal(`
+    <div class="modal-head"><h3>Edit Requirement</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body">
+      <form id="editReqForm">
+        <div class="field"><label>Office</label><select id="erOffice">${OFFICES.map(o=>`<option ${o===r.office?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div class="field"><label>Requirement</label><input id="erName" value="${r.requirement}" required></div>
+        <div class="field"><label>Required</label><select id="erRequired"><option ${r.required==='Yes'?'selected':''}>Yes</option><option ${r.required==='No'?'selected':''}>No</option></select></div>
+      </form>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-primary" id="erSubmit" data-i="${i}">Save Changes</button></div>
+  `);
+}
+
+function modalConfirmReset(){
+  openModal(`
+    <div class="modal-body" style="text-align:center;padding-top:28px;">
+      <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+      <h3 style="margin-bottom:6px;">Reset all demo data?</h3>
+      <p class="cell-sub">Every change you've made will be permanently discarded and the original mock data restored.</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Cancel</button><button class="btn btn-danger" id="confirmReset">Reset Demo Data</button></div>
+  `);
+}
+
+function modalViewProfile(){
+  const a = state.admins[0];
+  openModal(`
+    <div class="modal-head"><h3>Administrator Profile</h3><button class="close-x" data-close="1">✕</button></div>
+    <div class="modal-body" style="text-align:center;">
+      <div class="sb-avatar" style="margin:0 auto 14px;width:70px;height:70px;font-size:22px;">${initialsOf(a?.name)}</div>
+      <h3>${a?.name}</h3>
+      <p class="cell-sub" style="margin-top:4px;">${a?.role} · ${a?.email}</p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close="1">Close</button></div>
+  `);
+}
+
+/* =========================================================================
+   EVENT HANDLING
+   ========================================================================= */
+function fieldError(inputEl, show){
+  if(!inputEl) return;
+  inputEl.classList.toggle('field-err', show);
+}
+function validateRequired(ids){
+  let ok = true;
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const bad = !el.value || !el.value.trim();
+    fieldError(el, bad);
+    if(bad) ok = false;
+  });
+  return ok;
+}
+
+function attachEvents(){
+  // tooltip for collapsed sidebar
+  document.querySelectorAll('.sb-link').forEach(link=>{
+    link.addEventListener('mouseenter', (e)=>{
+      if(!state.sidebarCollapsed) return;
+      const tip = document.createElement('div');
+      tip.className = 'sb-tooltip';
+      tip.textContent = link.dataset.tip;
+      document.body.appendChild(tip);
+      const r = link.getBoundingClientRect();
+      tip.style.left = (r.right+10)+'px';
+      tip.style.top = (r.top+r.height/2-12)+'px';
+      requestAnimationFrame(()=>tip.classList.add('show'));
+      link._tip = tip;
+    });
+    link.addEventListener('mouseleave', ()=>{ if(link._tip){ link._tip.remove(); link._tip=null; } });
+  });
+}
+
+document.addEventListener('click', function(e){
+  // sidebar nav
+  const navLink = e.target.closest('.sb-link[data-page], .pp-link[data-page], a[data-page]');
+  if(navLink){
+    e.preventDefault();
+    if(navLink.dataset.page==='logout'){ toast('Logged out.'); setTimeout(()=>{ window.location.href = 'clearance-system.html'; }, 600); return; }
+    state.page = navLink.dataset.page;
+    state.sidebarMobileOpen = false;
+    if(state.page==='students'){} // keep filters
+    render();
+    return;
+  }
+  if(e.target.closest('#backToDashBtn')){ state.page='dashboard'; render(); return; }
+  if(e.target.closest('#logoutBtn2')){ toast('Logged out.'); setTimeout(()=>{ window.location.href = 'clearance-system.html'; }, 600); return; }
+
+  // hamburger: collapse on desktop, slide on mobile
+  if(e.target.closest('#hamburgerBtn')){
+    if(window.innerWidth <= 900){ state.sidebarMobileOpen = !state.sidebarMobileOpen; }
+    else{ state.sidebarCollapsed = !state.sidebarCollapsed; }
+    render();
+    return;
+  }
+  if(e.target.closest('#sbBackdrop')){ state.sidebarMobileOpen=false; render(); return; }
+
+  // notif / profile dropdowns
+  if(e.target.closest('#notifBtn')){
+    e.stopPropagation();
+    document.getElementById('notifPanel').classList.toggle('hidden');
+    document.getElementById('profilePanel')?.classList.add('hidden');
+    return;
+  }
+  if(e.target.closest('#profileBtn')){
+    e.stopPropagation();
+    document.getElementById('profilePanel').classList.toggle('hidden');
+    document.getElementById('notifPanel')?.classList.add('hidden');
+    return;
+  }
+  if(e.target.closest('#markAllReadBtn')){ state.notifications.forEach(n=>n.read=true); render(); toast('All notifications marked as read.'); return; }
+  if(e.target.closest('#viewProfileBtn')){ e.preventDefault(); modalViewProfile(); return; }
+  if(!e.target.closest('.dropdown')){
+    document.getElementById('notifPanel')?.classList.add('hidden');
+    document.getElementById('profilePanel')?.classList.add('hidden');
+  }
+
+  // tabs (admin users page)
+
+  // modal close
+  if(e.target.closest('[data-close]')){ closeModal(); return; }
+  if(e.target.id==='modalBg'){ closeModal(); return; }
+
+  // ---- Students page actions ----
+  if(e.target.closest('#addStudentBtn')){ modalAddStudent(); return; }
+  if(e.target.closest('#exportStudentsBtn')){ toast('Export started (demo) — check your downloads folder.'); return; }
+  const va = e.target.closest('[data-action="view-student"]');
+  if(va){ modalViewStudent(va.dataset.id); return; }
+  const ea = e.target.closest('[data-action="edit-student"]');
+  if(ea){ modalEditStudent(ea.dataset.id); return; }
+  const da = e.target.closest('[data-action="deactivate-student"]');
+  if(da){ modalDeactivateStudent(da.dataset.id); return; }
+  if(e.target.closest('#confirmDeactivate')){
+    const id = e.target.closest('#confirmDeactivate').dataset.id;
+    const s = studentById(id); if(s) s.accountStatus='Inactive';
+    closeModal(); render(); toast('Student deactivated.', 'err');
+    return;
+  }
+  if(e.target.closest('[data-action="print-clearance"]')){ window.print(); return; }
+
+  // ---- Add Student submit ----
+  if(e.target.id==='asSubmit'){
+    const ok = validateRequired(['asId','asName','asEmail','asContact','asSection']);
+    if(!ok){ document.getElementById('asErr').style.display='block'; toast('Please complete all required fields.', 'warn'); return; }
+    const id = document.getElementById('asId').value.trim();
+    if(studentById(id)){ toast('A student with that ID already exists.', 'err'); return; }
+    const clearance = {}; OFFICES.forEach(o=>clearance[o]='Pending');
+    state.students.push({
+      id, name:document.getElementById('asName').value.trim(), email:document.getElementById('asEmail').value.trim(),
+      contact:document.getElementById('asContact').value.trim(), department:document.getElementById('asDept').value,
+      grade:document.getElementById('asGrade').value, section:document.getElementById('asSection').value.trim(),
+      status:'Pending', accountStatus:'Active', clearance, dateSubmitted: new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'}),
+    });
+    closeModal(); render(); toast('Student successfully added.');
+    return;
+  }
+  // ---- Edit Student submit ----
+  if(e.target.id==='esSubmit'){
+    const id = e.target.dataset.id;
+    const ok = validateRequired(['esName','esEmail','esContact','esSection']);
+    if(!ok){ toast('Please complete all required fields.', 'warn'); return; }
+    const s = studentById(id);
+    s.name=document.getElementById('esName').value.trim(); s.email=document.getElementById('esEmail').value.trim();
+    s.contact=document.getElementById('esContact').value.trim(); s.department=document.getElementById('esDept').value;
+    s.grade=document.getElementById('esGrade').value; s.section=document.getElementById('esSection').value.trim();
+    closeModal(); render(); toast('Changes saved successfully.');
+    return;
+  }
+
+  // ---- Admin Users / Faculty ----
+  if(e.target.closest('#addAdminBtn')){ modalAddAdmin(); return; }
+  if(e.target.id==='aaSubmit'){
+    const ok = validateRequired(['aaName','aaUser','aaEmail','aaPass']);
+    if(!ok){ toast('Please complete all required fields.', 'warn'); return; }
+    state.admins.push({name:document.getElementById('aaName').value.trim(), username:document.getElementById('aaUser').value.trim(),
+      email:document.getElementById('aaEmail').value.trim(), role:document.getElementById('aaRole').value});
+    closeModal(); render(); toast('Admin account created.');
+    return;
+  }
+
+  // ---- Clearance requests ----
+  const vr = e.target.closest('[data-action="view-request"]');
+  if(vr){ modalViewRequest(vr.dataset.id); return; }
+  const apr = e.target.closest('[data-action="approve-request"]');
+  if(apr && !apr.disabled){ modalApproveRequest(apr.dataset.id); return; }
+  const rej = e.target.closest('[data-action="reject-request"]');
+  if(rej && !rej.disabled){ modalRejectRequest(rej.dataset.id); return; }
+
+  if(e.target.id==='confirmApprove'){
+    const reqId = e.target.dataset.id;
+    const r = state.clearanceRequests.find(x=>x.requestId===reqId);
+    if(r){
+      r.status='Approved';
+      const s = studentById(r.studentId);
+      if(s){ s.clearance[r.currentOffice]='Approved'; s.status = computeOverallStatus(s.clearance);
+        if(s.status==='Completed') s.dateCompleted = new Date().toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'}); }
+      state.notifications.unshift({title:'Clearance approved', text:`${s?s.name:r.studentId}'s ${r.currentOffice} requirement was approved.`, time:'Just now', read:false});
+    }
+    closeModal(); render(); toast('Clearance approved successfully.');
+    return;
+  }
+  if(e.target.id==='confirmReject'){
+    const reqId = e.target.dataset.id;
+    const reasonEl = document.getElementById('rejectReason');
+    if(!reasonEl.value.trim()){ fieldError(reasonEl,true); toast('Please provide a reason for rejection.', 'warn'); return; }
+    const r = state.clearanceRequests.find(x=>x.requestId===reqId);
+    if(r){
+      r.status='Rejected';
+      const s = studentById(r.studentId);
+      if(s){ s.clearance[r.currentOffice]='Rejected'; s.status='Rejected'; s.rejectReason = reasonEl.value.trim(); }
+      state.notifications.unshift({title:'Clearance rejected', text:`${s?s.name:r.studentId}'s ${r.currentOffice} requirement was rejected.`, time:'Just now', read:false});
+    }
+    closeModal(); render(); toast('Clearance rejected. Student notification created.', 'warn');
+    return;
+  }
+
+  // ---- Departments ----
+  if(e.target.closest('#addOfficeBtn')){ modalAddOffice(); return; }
+  if(e.target.id==='aoSubmit'){
+    const ok = validateRequired(['aoName']);
+    if(!ok){ toast('Please enter an office name.', 'warn'); return; }
+    state.offices.push({name:document.getElementById('aoName').value.trim(), status:'Active'});
+    closeModal(); render(); toast('Office added.');
+    return;
+  }
+  const eo = e.target.closest('[data-action="edit-office"]');
+  if(eo){ modalEditOffice(eo.dataset.name); return; }
+  if(e.target.id==='eoSubmit'){
+    const orig = e.target.dataset.orig;
+    const office = state.offices.find(o=>o.name===orig);
+    if(office) office.name = document.getElementById('eoName').value.trim();
+    closeModal(); render(); toast('Office updated.');
+    return;
+  }
+  const to = e.target.closest('[data-action="toggle-office"]');
+  if(to){
+    const office = state.offices.find(o=>o.name===to.dataset.name);
+    if(office){ office.status = office.status==='Active'?'Inactive':'Active'; render(); toast(`${office.name} ${office.status==='Active'?'activated':'deactivated'}.`, office.status==='Active'?undefined:'err'); }
+    return;
+  }
+
+  // ---- Visual form map builder ----
+  const contextAdd=e.target.closest('[data-context-add]');
+  if(contextAdd){const menu=document.getElementById('mapContextMenu');const at=mapContextInsertAt??mapFields.length;addMapField(contextAdd.dataset.contextAdd,at);if(menu)menu.classList.remove('open');return;}
+  const mapAct=e.target.closest('[data-map-action]');
+  if(mapAct){ const i=mapFields.findIndex(f=>f.id===mapAct.dataset.id); if(i<0)return; const action=mapAct.dataset.mapAction; if(action==='edit'){selectedMapField=mapFields[i].id;render();return;} if(action==='delete'){mapFields.splice(i,1);selectedMapField=null;saveMapFields();render();return;} const j=action==='up'?i-1:i+1; if(j>=0&&j<mapFields.length){[mapFields[i],mapFields[j]]=[mapFields[j],mapFields[i]];selectedMapField=mapFields[j].id;saveMapFields();render();} return; }
+  const mapCard=e.target.closest('[data-map-id]');
+  if(mapCard&&!e.target.closest('.map-field-actions')){selectedMapField=mapCard.dataset.mapId;render();return;}
+  if(e.target.id==='saveMapFields'){saveMapFields();toast('Form map saved on this browser.');return;}
+  // ---- Requirements ----
+  if(e.target.closest('#openClearanceEditorBtn')){ const input=document.getElementById('clearanceFileUpload'); const file=input&&input.files&&input.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{ try{sessionStorage.setItem('eclaro_clearance_uploaded_file',JSON.stringify({name:file.name,type:file.type,data:reader.result})); window.location.href='form-designer.html';}catch(err){const st=document.getElementById('clearanceUploadStatus');if(st)st.textContent='This file is too large for browser storage. Please use a smaller PDF or image.';} }; reader.readAsDataURL(file); return; }
+  if(e.target.closest('#addRequirementBtn')){ modalAddRequirement(); return; }
+  if(e.target.id==='arSubmit'){
+    const ok = validateRequired(['arName']);
+    if(!ok){ toast('Please enter a requirement name.', 'warn'); return; }
+    state.requirements.push({office:document.getElementById('arOffice').value, requirement:document.getElementById('arName').value.trim(), required:document.getElementById('arRequired').value, status:'Active'});
+    closeModal(); render(); toast('Requirement added.');
+    return;
+  }
+  const erb = e.target.closest('[data-action="edit-req"]');
+  if(erb){ modalEditRequirement(parseInt(erb.dataset.i)); return; }
+  if(e.target.id==='erSubmit'){
+    const i = parseInt(e.target.dataset.i);
+    const r = state.requirements[i];
+    r.office=document.getElementById('erOffice').value; r.requirement=document.getElementById('erName').value.trim(); r.required=document.getElementById('erRequired').value;
+    closeModal(); render(); toast('Requirement updated.');
+    return;
+  }
+  const trb = e.target.closest('[data-action="toggle-req"]');
+  if(trb){
+    const r = state.requirements[parseInt(trb.dataset.i)];
+    r.status = r.status==='Active'?'Inactive':'Active';
+    render(); toast(`Requirement ${r.status==='Active'?'activated':'deactivated'}.`, r.status==='Active'?undefined:'err');
+    return;
+  }
+
+  // ---- Reports ----
+  if(e.target.closest('#printReportBtn')){ window.print(); return; }
+
+  // ---- Settings ----
+  if(e.target.closest('#resetDataBtn')){ modalConfirmReset(); return; }
+  if(e.target.id==='confirmReset'){
+    localStorage.removeItem(STORAGE_KEY);
+    const fresh = defaultData();
+    Object.assign(state, fresh);
+    state.page='dashboard';
+    closeModal(); render(); toast('Demo data has been reset.');
+    return;
+  }
+});
+
+/* Visual form builder: drag palette items onto the live canvas and reorder fields. */
+let draggedMapId = null;
+let draggedMapType = null;
+function addMapField(type, insertAt=mapFields.length){
+  const id='mf'+Date.now()+Math.random().toString(16).slice(2,6);
+  const field={id,type,label:({text:'New text field',textarea:'New text area',cell:'Cell Number',checkbox:'Check this box',signature:'Signature',hidden:'Section title'})[type]||'New field',placeholder:'',required:false,width:'full',x:4,y:4,w:42,h:90};
+  mapFields.splice(Math.max(0,Math.min(insertAt,mapFields.length)),0,field);
+  selectedMapField=id; saveMapFields(); render();
+}
+// Right mouse button drag draws a new field directly on the canvas.
+let mapDrawing=null;
+function mapPoint(e){const c=document.getElementById('mapCanvas');const r=c.getBoundingClientRect();return {x:Math.max(0,Math.min(100,((e.clientX-r.left)/r.width)*100)),y:Math.max(0,e.clientY-r.top)};}
+document.addEventListener('mousedown',e=>{
+  const canvas=e.target.closest('#mapCanvas');if(!canvas||e.button!==2)return;
+  if(e.target.closest('[data-map-id]'))return;
+  e.preventDefault();const p=mapPoint(e);const rect=document.createElement('div');rect.className='map-draw-rect';canvas.appendChild(rect);
+  mapDrawing={canvas,start:p,current:p,rect};
+});
+document.addEventListener('mousemove',e=>{
+  if(!mapDrawing)return;const p=mapPoint(e),a=mapDrawing.start;
+  mapDrawing.current=p;const left=Math.min(a.x,p.x),top=Math.min(a.y,p.y),width=Math.abs(p.x-a.x),height=Math.abs(p.y-a.y);
+  Object.assign(mapDrawing.rect.style,{left:left+'%',top:top+'px',width:width+'%',height:height+'px'});
+});
+document.addEventListener('mouseup',e=>{
+  if(!mapDrawing||e.button!==2)return;const d=mapDrawing;mapDrawing=null;d.rect.remove();
+  const a=d.start,b=d.current;const w=Math.max(12,Math.abs(b.x-a.x)),h=Math.max(58,Math.abs(b.y-a.y));
+  const id='mf'+Date.now()+Math.random().toString(16).slice(2,6);
+  mapFields.push({id,type:'text',label:'New text field',placeholder:'',required:false,width:'full',x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.min(w,100-Math.min(a.x,b.x)),h});
+  selectedMapField=id;saveMapFields();render();
+});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('#mapCanvas'))e.preventDefault();});
+document.addEventListener('click',e=>{if(!e.target.closest('#mapContextMenu'))document.getElementById('mapContextMenu')?.classList.remove('open');});
+
+document.addEventListener('dragstart',e=>{
+  const card=e.target.closest('[data-map-id]');
+  if(card){draggedMapId=card.dataset.mapId;draggedMapType=null;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','field:'+draggedMapId);}
+});
+document.addEventListener('dragover',e=>{
+  if(e.target.closest('#mapCanvas')&&(draggedMapType||draggedMapId)){e.preventDefault();e.dataTransfer.dropEffect='move';}
+  const card=e.target.closest('[data-map-id]');
+  if(card&&draggedMapId&&card.dataset.mapId!==draggedMapId){e.preventDefault();card.classList.add('map-drag-over');}
+});
+document.addEventListener('dragleave',e=>{const card=e.target.closest('[data-map-id]');if(card)card.classList.remove('map-drag-over');});
+document.addEventListener('drop',e=>{
+  const canvas=e.target.closest('#mapCanvas');const card=e.target.closest('[data-map-id]');if(!canvas&&!card)return;
+  if(draggedMapId){e.preventDefault();const from=mapFields.findIndex(f=>f.id===draggedMapId);const to=card?mapFields.findIndex(f=>f.id===card.dataset.mapId):mapFields.length-1;if(from>=0&&to>=0&&from!==to){const [moved]=mapFields.splice(from,1);mapFields.splice(Math.min(to,mapFields.length),0,moved);selectedMapField=moved.id;saveMapFields();render();}}
+  draggedMapId=null;draggedMapType=null;
+});
+document.addEventListener('dragend',()=>{draggedMapId=null;draggedMapType=null;document.querySelectorAll('.map-drag-over').forEach(n=>n.classList.remove('map-drag-over'));});
+function updateSelectedMapSetting(id,value){
+  const f=mapFields.find(x=>x.id===selectedMapField);if(!f)return;
+  if(id==='mapLabel')f.label=value;if(id==='mapPlaceholder')f.placeholder=value;if(id==='mapRequired')f.required=!!value;
+  if(id==='mapType')f.type=value;if(id==='mapFieldW')f.w=Math.max(10,Math.min(100,Number(value)||42));if(id==='mapFieldH')f.h=Math.max(50,Math.min(600,Number(value)||90));
+  saveMapFields();const canvas=document.getElementById('mapCanvas');if(canvas){const hint=canvas.querySelector('.map-canvas-hint');canvas.innerHTML=mapFields.map(mapFieldPreview).join('');if(hint)canvas.appendChild(hint);}
+}
+document.addEventListener('input',e=>{if(['mapLabel','mapPlaceholder','mapFieldW','mapFieldH'].includes(e.target.id))updateSelectedMapSetting(e.target.id,e.target.value);});
+document.addEventListener('change',e=>{if(['mapType','mapRequired'].includes(e.target.id))updateSelectedMapSetting(e.target.id,e.target.type==='checkbox'?e.target.checked:e.target.value);});
+document.addEventListener('change',e=>{if(e.target.id==='clearanceFileUpload'){const b=document.getElementById('openClearanceEditorBtn'),st=document.getElementById('clearanceUploadStatus'),f=e.target.files&&e.target.files[0];if(b)b.disabled=!f;if(st)st.textContent=f?`Selected: ${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`:'After selecting a file, click “Open Visual Editor”.';}});
+// Left-drag moves fields; bottom-right handle resizes them.
+let mapPointerEdit=null;
+document.addEventListener('mousedown',e=>{
+ const handle=e.target.closest('[data-resize-id]'),field=e.target.closest('[data-map-id]');if(e.button!==0||!field)return;
+ if(e.target.closest('button,input,textarea,select'))return;
+ const f=mapFields.find(x=>x.id===field.dataset.mapId);if(!f)return;
+ selectedMapField=f.id;mapPointerEdit={id:f.id,mode:handle?'resize':'move',x:e.clientX,y:e.clientY,origX:f.x??4,origY:f.y??4,origW:f.w??92,origH:f.h??94,canvas:document.getElementById('mapCanvas')};
+});
+document.addEventListener('mousemove',e=>{if(!mapPointerEdit)return;const d=mapPointerEdit,f=mapFields.find(x=>x.id===d.id);if(!f)return;const r=d.canvas.getBoundingClientRect();const dx=(e.clientX-d.x)/r.width*100,dy=e.clientY-d.y;
+ if(d.mode==='resize'){f.w=Math.max(10,Math.min(100-d.origX,d.origW+dx));f.h=Math.max(58,Math.min(600,d.origH+dy));}else{f.x=Math.max(0,Math.min(100-f.w,d.origX+dx));f.y=Math.max(0,d.origY+dy);}
+ const el=d.canvas.querySelector(`[data-map-id="${d.id}"]`);if(el)Object.assign(el.style,{left:f.x+'%',top:f.y+'px',width:f.w+'%',height:f.h+'px'});
+});
+document.addEventListener('mouseup',()=>{if(mapPointerEdit){saveMapFields();mapPointerEdit=null;}});document.addEventListener('dragend',()=>{draggedMapId=null;document.querySelectorAll('.map-drag-over').forEach(el=>el.classList.remove('map-drag-over'));});
+
+/* filters / search / selects */
+document.addEventListener('input', function(e){
+  if(e.target.id==='studentSearchInput'){
+    state.search = e.target.value;
+    const tb = document.getElementById('studentsTbody'); if(tb) tb.innerHTML = renderStudentRows();
+  }
+});
+document.addEventListener('change', function(e){
+  if(e.target.id==='statusFilterSel'){ state.filters.status = e.target.value; document.getElementById('studentsTbody').innerHTML = renderStudentRows(); }
+  if(e.target.id==='deptFilterSel'){ state.filters.department = e.target.value; document.getElementById('studentsTbody').innerHTML = renderStudentRows(); }
+  if(e.target.id==='gradeFilterSel'){ state.filters.grade = e.target.value; document.getElementById('studentsTbody').innerHTML = renderStudentRows(); }
+  if(e.target.id==='rfDept'){ state.reportFilters.department = e.target.value; render(); }
+  if(e.target.id==='rfGrade'){ state.reportFilters.grade = e.target.value; render(); }
+});
+
+/* forms that reload the page (deadline) */
+document.addEventListener('submit', function(e){
+  if(e.target.id==='deadlineForm'){
+    e.preventDefault();
+    state.deadline = { schoolYear:document.getElementById('dlYear').value, start:document.getElementById('dlStart').value, end:document.getElementById('dlEnd').value };
+    render(); toast('Clearance deadline updated.');
+  }
+  // prevent native submit on modal forms (buttons handle logic)
+  if(['addStudentForm','editStudentForm','addAdminForm','addOfficeForm','editOfficeForm','addReqForm','editReqForm'].includes(e.target.id)){
+    e.preventDefault();
+  }
+});
+
+/* escape key closes modal */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ closeModal(); }
+});
+
+render();
+</script>
+</body>
+</html>

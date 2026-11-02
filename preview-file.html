@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clearance File Preview — Eclaro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--navy-900:#132a45;--navy-800:#1a3552;--navy-700:#1d3f66;--navy-600:#27517f;--navy-100:#e8edf4;--olive:#7d9b3e;--olive-dark:#5f7a2b;--olive-light:#eef3e1;--ink:#232a2f;--ink-soft:#5b636b;--paper:#f4f6f7;--paper-2:#eef0f1;--line:#e1e5e8;--shadow:0 2px 10px rgba(20,30,40,.06),0 1px 2px rgba(20,30,40,.05);--radius:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h2{font-family:'Poppins',sans-serif;margin:0;letter-spacing:-.01em}
+p{margin:0}
+button{font-family:inherit;cursor:pointer}
+.top{min-height:64px;background:var(--navy-900);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--olive);display:flex;align-items:center;justify-content:center;font:700 18px 'Poppins',sans-serif}
+.brand b{display:block;font:700 14.5px 'Poppins',sans-serif}
+.brand small{display:block;font-size:10.5px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;background:rgba(255,255,255,.12);color:#fff;padding:10px 15px;border-radius:9px;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;transition:.12s}
+.btn:hover{background:rgba(255,255,255,.22)}
+.btn.olive{background:var(--olive)}
+.btn.olive:hover{background:var(--olive-dark)}
+main{max-width:1100px;margin:24px auto;padding:0 18px}
+.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.intro h2{font-size:20px;margin-bottom:5px}
+.intro p{color:var(--ink-soft);font-size:13.5px}
+.controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:#fff;border:1.4px solid var(--line);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;padding:7px 13px;border-radius:7px;font-weight:600;font-size:12.5px;color:var(--ink-soft)}
+.seg button.on{background:var(--navy-700);color:#fff}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+.toggle input{accent-color:var(--olive);width:16px;height:16px}
+.sheet-wrap{overflow:auto;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.sheet{position:relative;margin:0 auto;background:#fff;width:100%;max-width:900px;min-height:500px;box-shadow:0 6px 22px rgba(15,30,45,.14);overflow:hidden}
+.sheet+.sheet{margin-top:24px}
+.sheet img,.sheet canvas{display:block;width:100%;height:auto}
+.overlays{position:absolute;inset:0;pointer-events:none}
+.fv{position:absolute;display:flex;align-items:center;color:#0b1b33;font-family:'Inter',Arial,sans-serif;padding:0 .25em;line-height:1.2}
+.fv.multi{align-items:flex-start;white-space:pre-wrap;overflow-wrap:anywhere;padding-top:.15em}
+.fv.single{white-space:nowrap}
+.fv.check{justify-content:center;font-weight:700;padding:0}
+.fv.empty{color:transparent}
+.boxes .fv{outline:1.5px solid var(--navy-600);background:rgba(125,155,62,.13)}
+.boxes .fv .tag{display:block}
+.fv .tag{display:none;position:absolute;left:0;top:-1px;transform:translateY(-100%);background:var(--navy-700);color:#fff;font:600 9px 'Inter',sans-serif;padding:1px 5px;border-radius:3px 3px 0 0;white-space:nowrap}
+.fv .txt{display:block;width:100%;height:100%;overflow:hidden}
+.fv.single .txt{display:flex;align-items:center;white-space:nowrap}
+.fv.check .txt{display:flex;align-items:center;justify-content:center}
+.fv.sig .txt,.fv.hr .txt{display:flex;align-items:center;justify-content:center}
+.fv .sigimg{max-width:100%;max-height:100%;object-fit:contain}
+.fv .rule{display:block;width:100%;border-top:1px solid #0b1b33}
+.fv.title{font-family:'Poppins',sans-serif;font-weight:700}
+.fv.title .txt{display:flex;align-items:center}
+.fv.cells{padding:0}
+.fv .cellgrid{display:grid;width:100%;height:100%}
+.fv .cellgrid i{display:flex;align-items:center;justify-content:center;font-style:normal;overflow:hidden;min-width:0}
+.boxes .fv .cellgrid i{outline:1px solid var(--navy-600)}
+.note{color:var(--ink-soft);font-size:12.5px;margin:14px 2px;line-height:1.6}
+.msg{padding:60px 20px;text-align:center;color:var(--ink-soft)}
+.msg a{color:var(--navy-700);font-weight:600}
+@page{margin:0}
+@media print{
+body{background:#fff}
+.top,.note,.intro{display:none!important}
+main{margin:0;padding:0;max-width:none}
+.sheet-wrap{padding:0;border:0;background:#fff;border-radius:0;overflow:visible}
+.sheet{box-shadow:none;max-width:none;width:100%}
+.boxes .fv{outline:0;background:transparent}
+.sheet{break-after:page;break-inside:avoid;margin:0!important}
+.sheet:last-child{break-after:auto}
+.boxes .fv .cellgrid i{outline:0}
+.fv .tag{display:none!important}
+}
+@media(max-width:700px){.top{padding:10px 14px}.brand small{display:none}.sheet-wrap{padding:10px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">E</span><div><b>Eclaro Academy</b><small>Clearance File Preview</small></div></div>
+  <div class="actions">
+    <a class="btn" id="backLink" href="form-designer.html">&larr; Back to Designer</a>
+    <a class="btn" href="test-fields.html">Test fields</a>
+    <button class="btn olive" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</header>
+<main>
+  <section class="intro">
+    <div>
+      <h2 id="fileTitle">Clearance File Preview</h2>
+      <p id="modeNote">The uploaded document with the text of each mapped field placed on top.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" id="modeSeg">
+        <button type="button" data-mode="answers">With fields text</button>
+        <button type="button" data-mode="none">No fields</button>
+      </div>
+      <label class="toggle"><input type="checkbox" id="showBoxes"> Show field boxes</label>
+    </div>
+  </section>
+  <div class="sheet-wrap" id="sheetWrap">
+    <div class="msg" id="empty" style="display:none"></div>
+    <div id="sheets"></div>
+  </div>
+  <p class="note">The text you typed in <b>Test fields</b> appears inside each field exactly where it was mapped. Each section is its own page. Use <b>Print / Save as PDF</b> to save the filled document. Field boxes are never printed.</p>
+</main>
+<script>
+const FIELDS_KEY='eclaro_clearance_map_fields_v2';
+const FILE_KEY='eclaro_clearance_uploaded_file';
+const VALUES_KEY='eclaro_clearance_test_values';
+const sheetsEl=document.getElementById('sheets');
+const wrap=document.getElementById('sheetWrap');
+const emptyEl=document.getElementById('empty');
+const params=new URLSearchParams(location.search);
+const H_MULT={1:1.9,2:1.5,3:1.25,4:1.05,5:.9,6:.8};
+let doc=null,fields=[],answers={},mode='answers',baseRatio=null;
+try{doc=JSON.parse(sessionStorage.getItem(FILE_KEY)||'null')}catch(e){}
+try{fields=JSON.parse(localStorage.getItem(FIELDS_KEY)||'[]');if(!Array.isArray(fields))fields=[]}catch(e){fields=[]}
+try{answers=JSON.parse(sessionStorage.getItem(VALUES_KEY)||'{}')||{}}catch(e){answers={}}
+if(params.get('from')==='test')document.getElementById('backLink').href='test-fields.html';
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pg(f){return f.page||1}
+function pageCount(){return Math.max(1,...fields.map(pg))}
+function fmtDate(v){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');
+  if(!m)return v||'';
+  return new Date(+m[1],+m[2]-1,+m[3]).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+}
+function fmtShort(v){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');
+  return m?m[2]+'/'+m[3]+'/'+m[1].slice(2):(v||'');
+}
+function fmtTime(v){
+  const m=/^(\d{1,2}):(\d{2})/.exec(v||'');
+  if(!m)return v||'';
+  const h=+m[1];
+  return (h%12||12)+':'+m[2]+' '+(h>=12?'PM':'AM');
+}
+function valueFor(f){
+  const v=answers[f.id];
+  if(f.type==='checkbox')return v===true;
+  if(f.type==='date')return fmtDate(v);
+  if(f.type==='dateshort')return fmtShort(v);
+  if(f.type==='time')return fmtTime(v);
+  if(f.type==='cellbox')return Array.isArray(v)?v:[];
+  return typeof v==='string'?v:'';
+}
+function visible(f){
+  if(f.type==='section')return false;
+  if(f.type==='title'||f.type==='hr')return !!f.showOnFile;
+  return true;
+}
+function fieldHTML(f){
+  const type=f.type;
+  let v,inner,has,cls;
+  if(type==='title'){v=f.label||'';inner=esc(v);has=true;cls='title'}
+  else if(type==='hr'){inner='<span class="rule"></span>';has=true;cls='hr'}
+  else{
+    v=valueFor(f);
+    if(type==='checkbox'){inner=v?'\u2713':'';has=!!v;cls='check'}
+    else if(type==='signature'){inner=v?'<img class="sigimg" src="'+esc(v)+'" alt="">':'';has=!!v;cls='sig'}
+    else if(type==='cellbox'){
+      const r=Math.max(1,f.rows||1),c=Math.max(1,f.cols||1);
+      inner='<span class="cellgrid" style="grid-template-columns:repeat('+c+',minmax(0,1fr));grid-template-rows:repeat('+r+',minmax(0,1fr))">'+Array.from({length:r*c},(_,i)=>'<i>'+esc(v[i]||'')+'</i>').join('')+'</span>';
+      has=v.some(x=>String(x||'').trim()!=='');cls='cells';
+    }
+    else{inner=esc(v);has=!!v;cls=type==='textarea'?'multi':'single'}
+  }
+  return '<div class="fv '+cls+(has?'':' empty')+'" data-id="'+esc(f.id)+'" data-type="'+esc(type)+'" data-level="'+(f.level||2)+'" data-rows="'+(f.rows||1)+'" data-cols="'+(f.cols||1)+'" style="left:'+(Number(f.x)||0)+'%;top:'+(Number(f.y)||0)+'%;width:'+(Number(f.w)||10)+'%;height:'+(Number(f.h)||5)+'%"><span class="tag">'+esc(f.label||'Field')+'</span><span class="txt">'+inner+'</span></div>';
+}
+function renderFields(){
+  sheetsEl.querySelectorAll('.sheet').forEach(s=>{
+    const n=Number(s.dataset.page);
+    s.querySelector('.overlays').innerHTML=mode==='none'?'':fields.filter(f=>pg(f)===n&&visible(f)).map(fieldHTML).join('');
+  });
+  fitText();
+}
+function fitText(){
+  sheetsEl.querySelectorAll('.sheet').forEach(sheet=>{
+    const w=sheet.clientWidth,h=sheet.clientHeight;
+    if(!w||!h)return;
+    const s=w/900;
+    sheet.querySelectorAll('.fv').forEach(el=>{
+      const hp=el.clientHeight,wp=el.clientWidth,t=el.dataset.type;
+      if(t==='checkbox'){el.style.fontSize=Math.max(8,Math.min(hp,wp)*0.9)+'px';return}
+      if(t==='textarea'){el.style.fontSize=Math.max(7,Math.min(14*s,hp*0.3))+'px';return}
+      if(t==='title'){el.style.fontSize=Math.max(8,16*s*(H_MULT[el.dataset.level]||1.5))+'px';return}
+      if(t==='hr'){const r=el.querySelector('.rule');if(r)r.style.borderTopWidth=Math.max(1,1.5*s)+'px';return}
+      if(t==='cellbox'){
+        const ch=hp/(+el.dataset.rows||1),cw=wp/(+el.dataset.cols||1);
+        el.style.fontSize=Math.max(6,Math.min(ch*0.62,cw*0.7,16*s))+'px';
+        return;
+      }
+      el.style.fontSize=Math.max(7,Math.min(hp*0.62,16*s))+'px';
+    });
+  });
+}
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
+  document.getElementById('modeNote').textContent=m==='none'
+    ?'Showing the uploaded document only, without any field text.'
+    :'Showing the answers you typed in Test fields, placed exactly where each field was mapped.';
+  renderFields();
+}
+function showMsg(html){emptyEl.style.display='block';emptyEl.innerHTML=html;sheetsEl.style.display='none'}
+function buildSheets(){
+  sheetsEl.innerHTML='';
+  for(let n=1;n<=pageCount();n++){
+    const s=document.createElement('div');
+    s.className='sheet';
+    s.dataset.page=n;
+    s.innerHTML='<div class="overlays"></div>';
+    sheetsEl.appendChild(s);
+  }
+}
+function sheetOf(n){return sheetsEl.querySelector('.sheet[data-page="'+n+'"]')}
+async function load(){
+  if(!doc||!doc.data){
+    showMsg('No uploaded clearance file found. Return to the <a href="admin-dashboard.html">admin dashboard</a>, upload a file, map the fields and try again.');
+    return;
+  }
+  document.getElementById('fileTitle').textContent=(doc.name||'Clearance File')+' \u2014 Preview';
+  const blob=await(await fetch(doc.data)).blob();
+  const url=URL.createObjectURL(blob);
+  const type=doc.type||'';
+  const total=pageCount();
+  if(type.includes('image')){
+    const img=new Image();
+    img.onload=()=>{
+      baseRatio=img.naturalWidth+'/'+img.naturalHeight;
+      for(let n=1;n<=total;n++){
+        const s=sheetOf(n);
+        s.style.aspectRatio=baseRatio;s.style.minHeight='0';
+        if(n===1){s.insertBefore(img,s.querySelector('.overlays'))}
+      }
+      fitText();
+    };
+    img.src=url;
+  }else if(type.includes('pdf')||/\.pdf$/i.test(doc.name||'')){
+    if(!window.pdfjsLib){showMsg('The PDF preview library did not load. Connect to the internet and reload this page.');return}
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    try{
+      const pdf=await pdfjsLib.getDocument(url).promise;
+      const first=await pdf.getPage(1);
+      const fb=first.getViewport({scale:1});
+      baseRatio=fb.width+'/'+fb.height;
+      for(let n=1;n<=total;n++){
+        const s=sheetOf(n);
+        s.style.aspectRatio=baseRatio;s.style.minHeight='0';
+      }
+      fitText();
+      for(let n=1;n<=Math.min(total,pdf.numPages);n++){
+        const page=n===1?first:await pdf.getPage(n);
+        const base=page.getViewport({scale:1});
+        const viewport=page.getViewport({scale:Math.max(900,Math.min(1800,900*(window.devicePixelRatio||1)))/base.width});
+        const s=sheetOf(n);
+        s.style.aspectRatio=viewport.width+'/'+viewport.height;
+        const canvas=document.createElement('canvas');
+        canvas.width=viewport.width;canvas.height=viewport.height;
+        s.insertBefore(canvas,s.querySelector('.overlays'));
+        await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+        fitText();
+      }
+    }catch(e){showMsg('Unable to render this PDF preview.')}
+  }else{showMsg('Unsupported file type. Upload a PDF or an image.')}
+}
+document.getElementById('modeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(b)setMode(b.dataset.mode)});
+document.getElementById('showBoxes').addEventListener('change',e=>sheetsEl.classList.toggle('boxes',e.target.checked));
+if('ResizeObserver' in window)new ResizeObserver(fitText).observe(sheetsEl);else window.addEventListener('resize',fitText);
+window.addEventListener('beforeprint',fitText);
+const startMode='answers';
+buildSheets();
+setMode(startMode);
+load();
+</script>
+</body>
+</html>

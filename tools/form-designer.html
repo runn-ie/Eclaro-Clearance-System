@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clearance File Visual Editor — Eclaro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy-900:#132a45;--navy-800:#1a3552;--navy-700:#1d3f66;--navy-600:#27517f;--navy-100:#e8edf4;--olive:#7d9b3e;--olive-dark:#5f7a2b;--olive-light:#eef3e1;--success:#1e9e6b;--info:#2f6fed;--info-light:#e8eefd;--warning:#e8a33d;--warning-light:#fdf1de;--danger:#d64545;--danger-light:#fbe7e7;--ink:#232a2f;--ink-soft:#5b636b;--paper:#f4f6f7;--paper-2:#eef0f1;--line:#e1e5e8;--shadow:0 2px 10px rgba(20,30,40,.06),0 1px 2px rgba(20,30,40,.05);--radius:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Poppins',sans-serif;margin:0;letter-spacing:-.01em}
+p{margin:0}
+button{font-family:inherit;cursor:pointer}
+.top{height:64px;background:var(--navy-900);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:14px;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--olive);display:flex;align-items:center;justify-content:center;font:700 18px 'Poppins',sans-serif}
+.brand b{display:block;font:700 14.5px 'Poppins',sans-serif}
+.brand small{display:block;font-size:10.5px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.top a{color:#fff;text-decoration:none;background:rgba(255,255,255,.1);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:600}
+.top a:hover{background:rgba(255,255,255,.2)}
+.layout{display:grid;grid-template-columns:230px minmax(420px,1fr) 270px;gap:18px;padding:22px;max-width:1640px;margin:auto;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.panel h3{font-size:11.5px;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 14px;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:700}
+.palette{display:grid;gap:8px}
+.field-mode{width:100%;text-align:left;border:1.4px solid var(--line);background:#fff;padding:11px 12px;border-radius:9px;font-weight:600;font-size:13.5px;color:var(--ink)}
+.field-mode:hover{border-color:var(--navy-700)}
+.field-mode.active{border-color:var(--olive);background:var(--olive-light);color:var(--olive-dark)}
+.help{font-size:12.5px;line-height:1.6;color:var(--ink-soft);margin-top:14px}
+.notice{font-size:12.5px;line-height:1.55;color:var(--navy-700);background:var(--navy-100);border-radius:9px;padding:11px 12px;margin-top:14px}
+.workspace{min-width:0}
+.work-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;flex-wrap:wrap}
+.work-head h2{font-size:18px}
+.work-head span{font-size:12.5px;color:var(--ink-soft)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1.4px solid transparent;background:var(--navy-700);color:#fff;padding:10px 16px;border-radius:9px;font-weight:600;font-size:13.5px;white-space:nowrap;transition:.12s}
+.btn:hover{background:var(--navy-900)}
+.btn:active{transform:scale(.97)}
+.btn.outline{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn.outline:hover{border-color:var(--navy-700);color:var(--navy-700)}
+.btn.olive{background:var(--olive)}
+.btn.olive:hover{background:var(--olive-dark)}
+.btn.danger{background:var(--danger)}
+.btn.danger:hover{background:#b93636}
+.page-wrap{overflow:auto;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:24px;min-height:760px}
+.document-stage{position:relative;margin:0 auto;background:#fff;width:100%;max-width:900px;min-height:500px;box-shadow:0 6px 22px rgba(15,30,45,.14);overflow:hidden;touch-action:none;user-select:none}
+.document-stage img,.document-stage canvas{display:block;width:100%;height:auto;pointer-events:none}
+.field-layer{position:absolute;inset:0}
+.placed{position:absolute;border:1.5px solid var(--navy-600);border-radius:5px;background:rgba(255,255,255,var(--fo,.12));padding:6px;cursor:move;min-width:35px;min-height:25px}
+.placed.selected{border:2px solid var(--olive);box-shadow:0 0 0 3px rgba(125,155,62,.25)}
+/* The label sits above the mapped area; the inset guide shows the printable/text alignment area. */
+.placed label{position:absolute;left:0;bottom:calc(100% + 4px);display:block;max-width:220px;padding:1px 4px;background:#fff;font-size:11px;font-weight:700;color:var(--navy-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:5;pointer-events:none}
+.placed:not(:has(.cells)):not(:has(.ttl)):not(:has(.hrline))::after{content:"";position:absolute;inset:5px;border:1px dashed rgba(29,63,102,.55);border-radius:2px;pointer-events:none}
+.placed.selected:not(:has(.cells)):not(:has(.ttl)):not(:has(.hrline))::after{border-color:var(--olive);border-style:dashed}
+/* A solid typing baseline inside the inset guide shows where text will sit. */
+.placed:not(:has(.cells)):not(:has(.ttl)):not(:has(.hrline))::before{content:"";position:absolute;left:12px;right:12px;top:68%;border-top:1px solid rgba(29,63,102,.72);pointer-events:none;z-index:1}
+.placed.selected:not(:has(.cells)):not(:has(.ttl)):not(:has(.hrline))::before{border-top-color:var(--olive-dark);border-top-width:1.5px}
+.resize{position:absolute;width:13px;height:13px;right:-3px;bottom:-3px;background:var(--olive);border:2px solid #fff;border-radius:3px;cursor:nwse-resize}
+.draw-box{position:absolute;border:2px dashed var(--olive);background:rgba(125,155,62,.16);pointer-events:none}
+.status{font-size:12.5px;color:var(--ink-soft);margin-top:12px;min-height:18px}
+.prop label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin:14px 0 6px}
+.prop input,.prop select{width:100%;padding:10px 11px;border:1.4px solid var(--line);border-radius:9px;font:14px 'Inter',sans-serif;background:#fff;color:var(--ink)}
+.prop input:focus,.prop select:focus{outline:none;border-color:var(--navy-700);box-shadow:0 0 0 3px rgba(29,63,102,.12)}
+.empty{padding:60px 20px;text-align:center;color:var(--ink-soft)}
+.empty a{color:var(--navy-700);font-weight:600}
+.placed .cellwrap{position:relative;height:calc(100% - 17px);min-height:16px}
+.placed .cells{height:100%;display:grid;border-top:1px solid #555;border-left:1px solid #555;pointer-events:none}
+.placed .cells i{display:block;border-right:1px solid #555;border-bottom:1px solid #555;background:rgba(255,255,255,var(--fo,.12))}
+.placed .dv{position:absolute;z-index:3;background:var(--olive);opacity:.65}
+.placed .dv.col{top:-3px;bottom:-3px;width:5px;margin-left:-2px;cursor:col-resize;border-radius:3px}
+.placed .dv.row{left:-3px;right:-3px;height:5px;margin-top:-2px;cursor:row-resize;border-radius:3px}
+.prop input[type=range]{padding:0;accent-color:var(--olive)}
+.placed .ttl{font-family:'Poppins',sans-serif;font-weight:700;color:var(--navy-800);line-height:1.15;overflow:hidden;pointer-events:none}
+.placed .badge{position:absolute;right:6px;top:3px;font:700 9px 'Inter',sans-serif;background:var(--navy-100);color:var(--navy-700);border-radius:4px;padding:1px 5px;pointer-events:none}
+.placed .hrline{display:flex;align-items:center;height:100%;pointer-events:none}
+.placed .hrline i{display:block;width:100%;border-top:2px solid var(--navy-700)}
+.prop .check{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;font-weight:600;color:var(--ink)}
+.prop .check input{width:auto}
+.prop .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.order-panel{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.order-panel h3{margin-bottom:6px}
+.order-help{font-size:11.5px;line-height:1.45;color:var(--ink-soft);margin-bottom:10px}
+.order-list{display:grid;gap:7px}
+.order-item{display:flex;align-items:center;gap:7px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:grab;user-select:none;touch-action:none}.order-item:active{cursor:grabbing}.order-item.dragging{opacity:.4;border-style:dashed}.order-item.drag-over{border-color:var(--olive);background:var(--olive-light)}
+.order-item.active{border-color:var(--olive);background:var(--olive-light)}
+.order-item.dragging{opacity:.22;transform:scale(.98)}
+.order-item.drag-over{border:2px solid var(--olive);box-shadow:0 0 0 3px rgba(120,150,45,.16);transform:scale(1.015)}
+.order-drag-preview{position:fixed;z-index:99999;pointer-events:none;opacity:.96;box-shadow:0 12px 28px rgba(0,0,0,.22);border:1px solid var(--olive);background:#fff;border-radius:10px;padding:10px 12px;min-width:220px;max-width:min(82vw,360px);transform:translate(-18px,-50%) rotate(1deg);transition:box-shadow .12s ease}
+.order-name{flex:1;min-width:0;text-align:left;border:0;background:transparent;color:var(--ink);font:600 11.5px 'Inter',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:3px}
+.order-num{font-size:10px;color:var(--ink-soft);min-width:18px}
+.order-drag{color:var(--ink-soft);font-size:16px;line-height:1;padding:0 3px;cursor:grab}
+
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.page-wrap{min-height:500px}}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">E</span><div><b>Eclaro Academy</b><small>Clearance File Visual Editor</small></div></div>
+  <a href="../Admin.html">&larr; Back to Clearance File Upload</a>
+</header>
+<main class="layout">
+  <aside class="panel">
+    <h3>Fields toolbox</h3>
+    <div class="palette" id="fieldPalette">
+      <button class="field-mode active" data-type="text">&#9636; &nbsp;Text field</button>
+      <button class="field-mode" data-type="textarea">&#9636; &nbsp;Long text</button>
+      <button class="field-mode" data-type="date">&#9638; &nbsp;Date</button>
+      <button class="field-mode" data-type="select">&#9662; &nbsp;Dropdown</button>
+      <button class="field-mode" data-type="checkbox">&#9745; &nbsp;Checkbox</button>
+      <button class="field-mode" data-type="file">&#8613; &nbsp;File upload</button>
+      <button class="field-mode" data-type="number">&#35; &nbsp;Number</button>
+      <button class="field-mode" data-type="dateshort">&#9638; &nbsp;Date (mm/dd/yy)</button>
+      <button class="field-mode" data-type="time">&#9719; &nbsp;Time</button>
+      <button class="field-mode" data-type="signature">&#9998; &nbsp;Hand-drawn signature</button>
+      <button class="field-mode" data-type="cellbox">&#9638; &nbsp;Cell box</button>
+      <button class="field-mode" data-type="title">&#72; &nbsp;Hidden title</button>
+      <button class="field-mode" data-type="hr">&#8213; &nbsp;Horizontal line (hr)</button>
+    </div>
+    <p class="help">1. Choose a field type.<br>2. Right-click and drag on the document where the field belongs.<br>3. Select a placed field to edit it. Drag to move, use the corner to resize.<br>4. Select a cell box to drag the green handles and move its column and row lines.<br>5. Press <b>Test fields</b> to fill in the form and see the live preview of the file.</p>
+    <div class="notice">Your uploaded document stays visible underneath the fields while you map the form.</div>
+  </aside>
+  <section class="workspace">
+    <div class="work-head">
+      <div><h2 id="docName">Uploaded Clearance Document</h2><span>Place fields directly over the document</span></div>
+      <div class="actions">
+        <button class="btn outline" id="clearSelection">Deselect</button>
+        <button class="btn outline" id="save">Save layout</button>
+        <button class="btn" id="testFields">Test fields</button>
+      </div>
+    </div>
+    <div class="page-wrap">
+      <div id="documentStage" class="document-stage">
+        <div class="empty" id="emptyState">No clearance file was received. Return to Requirements and upload a PDF or image.</div>
+        <div class="field-layer" id="fields"></div>
+      </div>
+    </div>
+    <div class="status" id="status">Choose a field type, then right-click and drag on the uploaded document.</div>
+  </section>
+  <aside class="panel">
+    <h3>Field properties</h3>
+    <div id="properties" class="prop"><p class="help" style="margin-top:0">Select a field on the document to edit its label, type and size.</p></div>
+    <div class="order-panel">
+      <h3>Field order</h3>
+      <p class="order-help">Drag and drop fields to change the order they appear on the Test Fields page.</p>
+      <div id="fieldOrderList" class="order-list"></div>
+    </div>
+  </aside>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const FIELDS_KEY='eclaro_clearance_map_fields_v2';
+const FILE_KEY='eclaro_clearance_uploaded_file';
+const TYPE_LABELS={text:'Text field',textarea:'Long text',date:'Date',select:'Dropdown',checkbox:'Checkbox',file:'File upload',number:'Number',dateshort:'Date (mm/dd/yy)',time:'Time',signature:'Hand-drawn signature',cellbox:'Cell box',title:'Hidden title',hr:'Horizontal line (hr)'};
+const H_PX={1:24,2:20,3:17,4:15,5:13,6:12};
+let fields=[],selected=null,drawing=null,editing=null,selectedType='text',docData=null;
+try{fields=JSON.parse(localStorage.getItem(FIELDS_KEY)||'[]');if(!Array.isArray(fields))fields=[]}catch(e){fields=[]}
+try{docData=JSON.parse(sessionStorage.getItem(FILE_KEY)||'null')}catch(e){docData=null}
+const stage=document.getElementById('documentStage');
+const layer=document.getElementById('fields');
+const statusEl=document.getElementById('status');
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setStatus(t){statusEl.textContent=t}
+function persist(){try{localStorage.setItem(FIELDS_KEY,JSON.stringify(fields));return true}catch(e){setStatus('Layout is too large to save in browser storage.');return false}}
+function sizesOf(a,n){return Array.isArray(a)&&a.length===n?a:Array.from({length:n},()=>1/n)}
+function tmpl(a,n){return sizesOf(a,n).map(s=>'minmax(0,'+s+'fr)').join(' ')}
+function applyDefaults(f){
+  if(f.type==='cellbox'){f.rows=f.rows||1;f.cols=f.cols||8;f.charMode=!!f.charMode}
+  if(f.type==='title'){f.level=f.level||2;f.showOnFile=!!f.showOnFile}
+  if(f.type==='hr'){f.showOnFile=!!f.showOnFile}
+  if(f.opacity==null)f.opacity=12;
+  if(!f.align)f.align=(f.type==='cellbox'||f.type==='checkbox')?'center':'left';
+}
+fields=fields.filter(f=>f.type!=='section');
+fields.forEach(f=>{delete f.page;applyDefaults(f)});
+function cellHTML(f){
+  const r=Math.max(1,f.rows||1),c=Math.max(1,f.cols||1);
+  let h='<div class="cellwrap"><div class="cells" style="grid-template-columns:'+tmpl(f.colW,c)+';grid-template-rows:'+tmpl(f.rowH,r)+'">'+'<i></i>'.repeat(r*c)+'</div>';
+  if(f.id===selected){
+    let acc=0;
+    sizesOf(f.colW,c).slice(0,-1).forEach((s,k)=>{acc+=s;h+='<b class="dv col" data-div="col" data-i="'+k+'" style="left:'+acc*100+'%"></b>'});
+    acc=0;
+    sizesOf(f.rowH,r).slice(0,-1).forEach((s,k)=>{acc+=s;h+='<b class="dv row" data-div="row" data-i="'+k+'" style="top:'+acc*100+'%"></b>'});
+  }
+  return h+'</div>';
+}
+function placedHTML(f){
+  const al='text-align:'+(f.align||'left');
+  if(f.type==='title')return '<span class="badge">H'+(f.level||2)+(f.showOnFile?' · on file':' · hidden')+'</span><div class="ttl" style="font-size:'+H_PX[f.level||2]+'px;'+al+'">'+esc(f.label||'Title')+'</div>';
+  if(f.type==='hr')return '<span class="badge">'+(f.showOnFile?'on file':'hidden')+'</span><div class="hrline"><i></i></div>';
+  return '<label style="'+al+'">'+esc(f.label||'Text field')+'</label>'+(f.type==='cellbox'?cellHTML(f):'');
+}
+function renderLayer(){
+  layer.innerHTML=fields.map(f=>'<div class="placed '+(selected===f.id?'selected':'')+'" data-id="'+f.id+'" style="--fo:'+(f.opacity/100)+';left:'+f.x+'%;top:'+f.y+'%;width:'+f.w+'%;height:'+f.h+'%">'+placedHTML(f)+'<span class="resize" data-resize="'+f.id+'"></span></div>').join('');
+}
+function render(){renderLayer();renderProps();renderOrder()}
+function renderOrder(){
+  const box=document.getElementById('fieldOrderList');
+  if(!fields.length){box.innerHTML='<p class="help" style="margin:0">No fields added yet.</p>';return}
+  box.innerHTML=fields.map((f,i)=>'<div class="order-item '+(selected===f.id?'active':'')+'" data-order-id="'+esc(f.id)+'" draggable="true">'
+    +'<span class="order-drag" aria-hidden="true" title="Drag to reorder">⠿</span>'
+    +'<span class="order-num">'+(i+1)+'.</span>'
+    +'<button type="button" class="order-name" data-order-select="'+esc(f.id)+'" title="Select field">'+esc(f.label||TYPE_LABELS[f.type]||'Untitled field')+'</button></div>').join('');
+}
+function opt(v,cur,label){return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+label+'</option>'}
+function renderProps(){
+  const box=document.getElementById('properties');
+  const f=fields.find(x=>x.id===selected);
+  if(!f){box.innerHTML='<p class="help" style="margin-top:0">Select a field on the document to edit its label, type and size.</p>';return}
+  let h='<label>'+(f.type==='title'?'Title text':'Field label')+'</label><input id="pLabel" value="'+esc(f.label)+'">';
+  h+='<label>Field type</label><select id="pType">'+Object.keys(TYPE_LABELS).map(k=>opt(k,f.type,TYPE_LABELS[k])).join('')+'</select>';
+  if(f.type==='cellbox'){
+    h+='<div class="two"><div><label>Rows</label><input id="pRows" type="number" min="1" max="30" value="'+(f.rows||1)+'"></div><div><label>Columns</label><input id="pCols" type="number" min="1" max="50" value="'+(f.cols||1)+'"></div></div>';
+    h+='<label class="check"><input id="pChar" type="checkbox"'+(f.charMode?' checked':'')+'> One character per cell</label>';
+    h+='<div class="actions" style="margin-top:12px"><button class="btn outline" id="resetLines" type="button">Reset line spacing</button></div>';
+  }
+  if(f.type==='title'){
+    h+='<label>Heading size</label><select id="pLevel">'+[1,2,3,4,5,6].map(n=>opt(String(n),String(f.level||2),'H'+n)).join('')+'</select>';
+    h+='<label class="check"><input id="pShow" type="checkbox"'+(f.showOnFile?' checked':'')+'> Also print on the file</label>';
+  }
+  if(f.type==='hr')h+='<label class="check"><input id="pShow" type="checkbox"'+(f.showOnFile?' checked':'')+'> Also print on the file</label>';
+  if(f.type!=='signature'&&f.type!=='hr')h+='<label>Text alignment</label><select id="pAlign">'+opt('left',f.align,'Left')+opt('center',f.align,'Middle')+opt('right',f.align,'Right')+'</select>';
+  h+='<label>Opacity (<span id="pOpVal">'+f.opacity+'</span>%)</label><input id="pOpacity" type="range" min="0" max="100" value="'+f.opacity+'">';
+  if(f.type!=='signature'&&f.type!=='title'){
+    const widthOptions=[['100','12/12 (Full width)'],['75','9/12'],['66.6667','8/12'],['58.3333','7/12'],['50','6/12'],['33.3333','4/12'],['25','3/12'],['20','20%']];
+    const testWidth=Number(f.testW ?? ((f.type==='textarea'||f.type==='cellbox'||f.type==='file')?100:50));
+    h+='<label>Test field width</label><select id="pTestWidth">'+widthOptions.map(o=>'<option value="'+o[0]+'"'+(Math.abs(Number(o[0])-testWidth)<0.01?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>';
+  }
+   h+='<label>Height (%)</label><input id="pHeight" type="number" min="2" max="100" value="'+Math.round(f.h)+'">'
+   +'<div class="actions" style="margin-top:18px"><button class="btn danger" id="deleteField" type="button">Delete field</button></div>';
+  box.innerHTML=h;
+}
+function pt(e){
+  const r=stage.getBoundingClientRect();
+  return{x:Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100)),y:Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))};
+}
+function showEmpty(msg){const el=document.getElementById('emptyState');el.style.display='block';el.textContent=msg}
+async function loadDocument(){
+  if(!docData||!docData.data){document.getElementById('emptyState').style.display='block';return}
+  document.getElementById('docName').textContent=docData.name||'Uploaded Clearance Document';
+  document.getElementById('emptyState').style.display='none';
+  const blob=await(await fetch(docData.data)).blob();
+  const url=URL.createObjectURL(blob);
+  const type=docData.type||'';
+  if(type.includes('image')){
+    const img=new Image();
+    img.onload=()=>{stage.style.aspectRatio=img.naturalWidth+'/'+img.naturalHeight;stage.style.minHeight='0';stage.insertBefore(img,layer)};
+    img.src=url;
+  }else if(type.includes('pdf')||/\.pdf$/i.test(docData.name||'')){
+    if(!window.pdfjsLib){showEmpty('PDF preview could not load. Check your internet connection, then reload this page.');return}
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    try{
+      const pdf=await pdfjsLib.getDocument(url).promise;
+      const page=await pdf.getPage(1);
+      const base=page.getViewport({scale:1});
+      const viewport=page.getViewport({scale:900/base.width});
+      stage.style.aspectRatio=viewport.width+'/'+viewport.height;
+      stage.style.minHeight='0';
+      const canvas=document.createElement('canvas');
+      canvas.width=viewport.width;canvas.height=viewport.height;
+      stage.insertBefore(canvas,layer);
+      await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    }catch(err){showEmpty('Could not display this PDF. Please try another PDF or an image copy.')}
+  }else{showEmpty('Unsupported file type. Upload a PDF or image.')}
+}
+document.getElementById('fieldPalette').addEventListener('click',e=>{
+  const b=e.target.closest('[data-type]');
+  if(!b)return;
+  selectedType=b.dataset.type;
+  document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('active',x===b));
+  setStatus(TYPE_LABELS[selectedType]+' selected. Right-click and drag on the document to place it.');
+});
+stage.addEventListener('contextmenu',e=>e.preventDefault());
+stage.addEventListener('mousedown',e=>{
+  if(e.button===2&&docData&&!e.target.closest('.placed')){
+    e.preventDefault();
+    const p=pt(e),r=document.createElement('div');
+    r.className='draw-box';
+    stage.appendChild(r);
+    drawing={start:p,current:p,rect:r};
+    return;
+  }
+  const el=e.target.closest('.placed');
+  if(!el||e.button!==0)return;
+  const f=fields.find(x=>x.id===el.dataset.id);
+  if(!f)return;
+  const dv=e.target.closest('[data-div]');
+  if(dv){
+    const rect=dv.parentElement.getBoundingClientRect(),axis=dv.dataset.div;
+    editing={mode:'div',id:f.id,axis,i:+dv.dataset.i,x:e.clientX,y:e.clientY,size:axis==='col'?rect.width:rect.height,base:sizesOf(axis==='col'?f.colW:f.rowH,axis==='col'?f.cols:f.rows).slice()};
+    e.preventDefault();
+    return;
+  }
+  const changed=selected!==f.id;
+  selected=f.id;
+  if(changed)renderLayer();
+  renderProps();
+  renderOrder();
+  editing={id:f.id,mode:e.target.closest('[data-resize]')?'resize':'move',x:e.clientX,y:e.clientY,ox:f.x,oy:f.y,ow:f.w,oh:f.h};
+  e.preventDefault();
+});
+document.addEventListener('mousemove',e=>{
+  if(drawing){
+    const p=pt(e),a=drawing.start;
+    drawing.current=p;
+    Object.assign(drawing.rect.style,{left:Math.min(a.x,p.x)+'%',top:Math.min(a.y,p.y)+'%',width:Math.abs(p.x-a.x)+'%',height:Math.abs(p.y-a.y)+'%'});
+  }
+  if(editing){
+    const f=fields.find(x=>x.id===editing.id);
+    if(!f)return;
+    if(editing.mode==='div'){
+      const raw=(editing.axis==='col'?e.clientX-editing.x:e.clientY-editing.y)/editing.size;
+      const i=editing.i,b=editing.base;
+      const d=Math.max(.03-b[i],Math.min(b[i+1]-.03,raw));
+      const arr=b.slice();
+      arr[i]+=d;arr[i+1]-=d;
+      if(editing.axis==='col')f.colW=arr;else f.rowH=arr;
+      renderLayer();
+      return;
+    }
+    const r=stage.getBoundingClientRect();
+    const dx=(e.clientX-editing.x)/r.width*100,dy=(e.clientY-editing.y)/r.height*100;
+    if(editing.mode==='resize'){
+      f.w=Math.max(3,Math.min(100-editing.ox,editing.ow+dx));
+      f.h=Math.max(2,Math.min(100-editing.oy,editing.oh+dy));
+    }else{
+      f.x=Math.max(0,Math.min(100-f.w,editing.ox+dx));
+      f.y=Math.max(0,Math.min(100-f.h,editing.oy+dy));
+    }
+    const el=layer.querySelector('[data-id="'+f.id+'"]');
+    if(el)Object.assign(el.style,{left:f.x+'%',top:f.y+'%',width:f.w+'%',height:f.h+'%'});
+  }
+});
+document.addEventListener('mouseup',e=>{
+  if(drawing&&e.button===2){
+    const d=drawing;
+    drawing=null;
+    d.rect.remove();
+    const a=d.start,b=d.current;
+    const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);
+    const w=Math.max(3,Math.abs(b.x-a.x)),h=Math.max(2,Math.abs(b.y-a.y));
+    const f={id:'field_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),type:selectedType,label:TYPE_LABELS[selectedType],x,y,w:Math.min(w,100-x),h:Math.min(h,100-y)};
+    applyDefaults(f);
+    fields.push(f);
+    selected=f.id;
+    persist();
+    render();
+    setStatus('Field added over the uploaded document. Edit it in the right panel.');
+  }
+  if(editing){persist();editing=null}
+});
+document.getElementById('properties').addEventListener('input',e=>{
+  const f=fields.find(x=>x.id===selected);
+  if(!f)return;
+  const id=e.target.id;
+  if(id==='pLabel')f.label=e.target.value;
+  if(id==='pHeight')f.h=Math.max(2,Math.min(100-f.y,Number(e.target.value)||2));
+  if(id==='pRows'){f.rows=Math.max(1,Math.min(30,Math.round(Number(e.target.value))||1));f.rowH=null}
+  if(id==='pCols'){f.cols=Math.max(1,Math.min(50,Math.round(Number(e.target.value))||1));f.colW=null}
+  if(id==='pOpacity'){f.opacity=Number(e.target.value);document.getElementById('pOpVal').textContent=f.opacity}
+  persist();
+  renderLayer();
+  if(id==='pLabel')renderOrder();
+});
+document.getElementById('properties').addEventListener('change',e=>{
+  const f=fields.find(x=>x.id===selected);
+  if(!f)return;
+  const id=e.target.id;
+  if(id==='pType'){f.type=e.target.value;applyDefaults(f);persist();render()}
+  if(id==='pTestWidth'){f.testW=Number(e.target.value);persist();render()}
+  if(id==='pLevel'){f.level=Number(e.target.value)||2;persist();renderLayer()}
+  if(id==='pShow'){f.showOnFile=e.target.checked;persist();renderLayer()}
+  if(id==='pChar'){f.charMode=e.target.checked;persist()}
+  if(id==='pAlign'){f.align=e.target.value;persist();renderLayer()}
+});
+document.getElementById('properties').addEventListener('click',e=>{
+  const f=fields.find(x=>x.id===selected);
+  if(!f)return;
+  if(e.target.id==='resetLines'){f.colW=null;f.rowH=null;persist();renderLayer()}
+  if(e.target.id==='deleteField'){fields=fields.filter(x=>x.id!==selected);selected=null;persist();render()}
+});
+const orderList=document.getElementById('fieldOrderList');
+let pointerDrag=null;
+orderList.addEventListener('click',e=>{
+  if(pointerDrag)return;
+  const selectBtn=e.target.closest('[data-order-select]');
+  if(selectBtn){selected=selectBtn.dataset.orderSelect;render();}
+});
+// Pointer-based drag works with mouse, touchscreens, and styluses.
+orderList.addEventListener('pointerdown',e=>{
+  const item=e.target.closest('.order-item');
+  if(!item || e.target.closest('button'))return;
+  e.preventDefault();
+  const preview=item.cloneNode(true);
+  preview.classList.remove('active','dragging','drag-over');
+  preview.classList.add('order-drag-preview');
+  document.body.appendChild(preview);
+  preview.style.left=e.clientX+'px'; preview.style.top=e.clientY+'px';
+  pointerDrag={id:item.dataset.orderId,pointerId:e.pointerId,targetId:item.dataset.orderId,after:false,preview};
+  item.classList.add('dragging');
+  try{item.setPointerCapture(e.pointerId)}catch(_){}
+});
+orderList.addEventListener('pointermove',e=>{
+  if(!pointerDrag || pointerDrag.pointerId!==e.pointerId)return;
+  if(pointerDrag.preview){pointerDrag.preview.style.left=e.clientX+'px';pointerDrag.preview.style.top=e.clientY+'px';}
+  const items=[...orderList.querySelectorAll('.order-item')];
+  const y=e.clientY;
+  let target=null;
+  for(const item of items){
+    const r=item.getBoundingClientRect();
+    if(y>=r.top && y<=r.bottom){target=item;pointerDrag.after=y>r.top+r.height/2;break;}
+  }
+  if(!target && items.length){
+    target=y<items[0].getBoundingClientRect().top?items[0]:items[items.length-1];
+    pointerDrag.after=target===items[items.length-1];
+  }
+  orderList.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  if(target && target.dataset.orderId!==pointerDrag.id){
+    target.classList.add('drag-over');
+    pointerDrag.targetId=target.dataset.orderId;
+  }else if(target){
+    pointerDrag.targetId=target.dataset.orderId;
+  }
+});
+function finishPointerDrag(e){
+  if(!pointerDrag || (e && pointerDrag.pointerId!==e.pointerId))return;
+  const drag=pointerDrag;
+  if(drag.preview)drag.preview.remove();
+  pointerDrag=null;
+  const from=fields.findIndex(f=>String(f.id)===String(drag.id));
+  let to=fields.findIndex(f=>String(f.id)===String(drag.targetId));
+  if(from>=0&&to>=0&&from!==to){
+    if(drag.after)to++;
+    const [moved]=fields.splice(from,1);
+    if(from<to)to--;
+    fields.splice(Math.max(0,Math.min(to,fields.length)),0,moved);
+    persist();
+    render();
+    setStatus('Field order updated. The Test Fields page will use this order.');
+  }else{
+    orderList.querySelectorAll('.dragging,.drag-over').forEach(el=>el.classList.remove('dragging','drag-over'));
+  }
+}
+orderList.addEventListener('pointerup',finishPointerDrag);
+orderList.addEventListener('pointercancel',finishPointerDrag);
+document.getElementById('save').addEventListener('click',()=>{if(persist())setStatus('Field mapping saved in this browser.')});
+document.getElementById('clearSelection').addEventListener('click',()=>{selected=null;render()});
+document.getElementById('testFields').addEventListener('click',()=>{
+  if(persist())window.location.href='test-fields.html';
+});
+loadDocument().then(render);
+</script>
+</body>
+</html>
